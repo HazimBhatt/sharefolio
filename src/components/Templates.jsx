@@ -281,7 +281,9 @@ const Templates = () => {
           className="text-center mt-16"
         >
           <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-8 border border-border">
-            <h3 className="text-2xl font-bold mb-4">Can't find what you're looking for?</h3>
+            <h3 className="text-2xl font-bold mb-4">Can't find what you're <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/20 after:to-transparent after:skew-x-12 after:animate-pulse ">
+            Looking For?
+          </span></h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Start from scratch or contact us for custom template solutions tailored to your needs.
             </p>

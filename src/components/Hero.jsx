@@ -12,7 +12,7 @@ const Hero = () => {
       <div className="left-side-hero flex gap-5 flex-col text-center md:text-left">
         <h1 className=" text-4xl sm:text-5xl font-semibold leading-snug">
           Your Dream{" "}
-          <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/20 after:to-transparent after:skew-x-12 after:animate-pulse">
+          <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/20 after:to-transparent after:skew-x-12 after:animate-pulse ">
             Portfolio.
           </span>
           <br />
@@ -54,12 +54,14 @@ const Hero = () => {
           alt="hero image"
           width={800}
           height={600}
+          priority
         />): <Image
           src="/hero-dark.png"
           className="rounded-md object-cover"
           alt="hero image"
           width={800}
           height={600}
+          priority
         />
        }
       </div>
