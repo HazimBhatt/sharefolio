@@ -46,7 +46,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`w-full poppins-light fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <nav className={`w-full poppins-regular md:poppins-light fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'bg-white/80 backdrop-blur-md py-2 shadow-sm' : 'bg-transparent py-4'
       }`}>
         <div className='w-[90%] max-w-7xl mx-auto flex items-center justify-between'>
