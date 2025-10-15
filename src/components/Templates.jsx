@@ -291,9 +291,10 @@ const Templates = () => {
             </p>
             <div className="flex gap-4 flex-col md:flex-row justify-center">
               <motion.button
+                data-focusable
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 border flex items-center gap-3 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all text-center justify-center duration-200"
+                className="px-6 py-3 border flex items-center gap-3 border-primary dark:hover:border-amber-200 dark:hover:bg-transparent text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all text-center justify-center duration-200"
               >
                Premium Templates <Terminal size={15}/>
               </motion.button>
