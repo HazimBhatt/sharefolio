@@ -6,13 +6,13 @@ import Footer from "@/components/Footer";
 import TestimonialsAndFaq from "@/components/TestimonialsColumn";
 export default function Home() {
   return (
-    <>
+    <div className="poppins-regular">
     <Hero/>
     <Templates/>
     <Working/>
     <Features/>
     <TestimonialsAndFaq/>
     <Footer/>
-    </>
+    </div>
   );
 }

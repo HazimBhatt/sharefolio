@@ -43,7 +43,7 @@ const testimonialsData = [
 const faqData = [
   {
     id: 'faq1',
-    question: 'How do I get started with Sharefolio?',
+    question: 'How do I get started ?',
     answer: 'Simply sign up for an account, choose a template that fits your style, and start customizing your portfolio. You can have your portfolio live on a free subdomain in under 10 minutes.'
   },
   {
@@ -320,7 +320,7 @@ const TestimonialsAndFaq = () => {
   const isTestimonialsInView = useInView(testimonialsRef, { margin: '-50px' })
 
   return (
-    <div className="w-full bg-gradient-to-b from-background to-muted/20 py-20 md:py-32" ref={sectionRef}>
+    <div className="w-full overflow-hidden bg-gradient-to-b from-background to-muted/20 py-20 md:py-32" ref={sectionRef}>
       <SmallWrap className="relative">
         {/* Background decoration */}
         <div className="absolute -top-20 -right-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
@@ -345,7 +345,7 @@ const TestimonialsAndFaq = () => {
             <span>FROM OUR USERS</span>
           </motion.div>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-4 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Loved by <span className='bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse'> Creators Worldwide</span>
+            Loved by <br /><span className='bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse'> Creators Worldwide</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Join thousands of professionals who trust Sharefolio to showcase their work and grow their careers
