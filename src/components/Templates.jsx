@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Contact, ExternalLink, Rocket, Terminal } from 'lucide-react';
+import { motion ,AnimatePresence} from 'framer-motion';
+import { Contact, ExternalLink, Rocket, Sparkles, Terminal } from 'lucide-react';
 import Image from 'next/image';
 
 const Templates = () => {
-  // Static template data
+
   const templates = [
     {
       id: "1",
@@ -64,6 +64,7 @@ const Templates = () => {
   ];
 
   const [isVisible, setIsVisible] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const containerRef = useRef(null);
   const trackRef = useRef(null);
   const animationRef = useRef(0);
@@ -86,13 +87,13 @@ const Templates = () => {
 
   // Animation logic
   useEffect(() => {
-    if (!isVisible || !trackRef.current || templates.length === 0) {
+    if (!isVisible || !trackRef.current || templates.length === 0 || isPaused) {
       cancelAnimationFrame(animationRef.current);
       return;
     }
 
     const animate = () => {
-      if (!trackRef.current) return;
+      if (!trackRef.current || isPaused) return;
       
       positionRef.current -= speedRef.current;
       
@@ -106,7 +107,7 @@ const Templates = () => {
 
     animationRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationRef.current);
-  }, [isVisible, templates]);
+  }, [isVisible, templates, isPaused]);
 
   const cardWidth = 400 + gap;
 
@@ -128,7 +129,16 @@ const Templates = () => {
     trackRef.current.style.transform = `translateX(${positionRef.current}px)`;
   };
 
-  // Skeleton loader
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
+
+  
   const renderSkeleton = () => (
     <div className="flex gap-8">
       {[...Array(4)].map((_, i) => (
@@ -151,19 +161,19 @@ const Templates = () => {
 
   return (
     <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
-      {/* Decorative elements */}
+
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
         <div className="absolute top-20 right-0 w-72 h-72 bg-primary/10 rounded-full blur-[100px]" />
         <div className="absolute bottom-20 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[100px]" />
         
-        {/* Grid pattern */}
+  
         <div className="absolute inset-0 opacity-[3%] [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:40px_40px]" />
         </div>
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
+ 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -181,7 +191,7 @@ const Templates = () => {
           </p>
         </motion.div>
 
-        {/* Templates Carousel */}
+
         <div 
           ref={containerRef}
           className="relative overflow-hidden py-6"
@@ -190,7 +200,7 @@ const Templates = () => {
             renderSkeleton()
           ) : (
             <>
-              {/* Fade effect on sides */}
+           
               <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
               <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
               
@@ -198,6 +208,8 @@ const Templates = () => {
                 ref={trackRef}
                 className="flex gap-8"
                 style={{ width: 'max-content' }}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               >
                 {[...templates, ...templates].map((template, index) => (
                   <motion.div 
@@ -206,13 +218,15 @@ const Templates = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.05 }}
                     className="w-[400px] flex-shrink-0 relative group"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
-                    {/* Card with gradient border */}
+              
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-purple-500/30 rounded-2xl blur-sm -z-10" />
                     
-                    {/* Template Card */}
+                   
                     <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] h-full flex flex-col">
-                      {/* Image */}
+        
                       <div className="relative overflow-hidden bg-gray-100">
                         <Image
                           src={template.image}
@@ -231,7 +245,6 @@ const Templates = () => {
                         </div>
                       </div>
 
-                      {/* Content */}
                       <div className="p-6 flex flex-col flex-grow">
                         <h3 className="text-xl font-semibold mb-2 text-foreground">
                           {template.name}
@@ -240,7 +253,6 @@ const Templates = () => {
                           {template.description}
                         </p>
 
-                        {/* Action Buttons */}
                         <div className="flex gap-3 mt-auto">
                           <motion.a
                             data-focusable
@@ -248,6 +260,8 @@ const Templates = () => {
                             whileTap={{ scale: 0.95 }}
                             href={template.demoUrl}
                             className="flex items-center justify-center gap-2 dark:hover:border-amber-200 dark:hover:bg-transparent flex-1 px-4 py-3 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200"
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                           >
                             <ExternalLink className="w-4 h-4" />
                             View Demo
@@ -260,6 +274,8 @@ const Templates = () => {
                             href={template.createUrl}
                             className="flex items-center justify-center gap-2 flex-1 px-4 py-3 text-white rounded-lg font-medium transition-all duration-200"
                             style={{ backgroundColor: '#7332a8' }}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
                           >
                             <Rocket className="w-4 h-4" />
                             Make Yours
@@ -270,11 +286,52 @@ const Templates = () => {
                   </motion.div>
                 ))}
               </div>
+
+              <AnimatePresence>
+                {isPaused && (
+                  <>
+                    <motion.button
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      onClick={() => navigate('prev')}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 bg-background/80 backdrop-blur-sm border border-border rounded-full p-3 hover:bg-accent transition-colors duration-200 shadow-lg"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </motion.button>
+                    <motion.button
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      onClick={() => navigate('next')}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 bg-background/80 backdrop-blur-sm border border-border rounded-full p-3 hover:bg-accent transition-colors duration-200 shadow-lg"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.button>
+                  </>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {isPaused && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute bottom-4 left-1/2 flex items-center gap-2 font-semibold transform -translate-x-1/2 z-30 bg-background/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 text-sm text-muted-foreground"
+                  >
+                    Click To Get More Information <Sparkles className="w-4 h-4 text-primary " />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </>
           )}
         </div>
 
-        {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -291,9 +348,10 @@ const Templates = () => {
             </p>
             <div className="flex gap-4 flex-col md:flex-row justify-center">
               <motion.button
+                data-focusable
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 border flex items-center gap-3 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all text-center justify-center duration-200"
+                className="px-6 py-3 border flex items-center gap-3 border-primary dark:hover:border-amber-200 dark:hover:bg-transparent text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all text-center justify-center duration-200"
               >
                Premium Templates <Terminal size={15}/>
               </motion.button>

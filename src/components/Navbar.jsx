@@ -66,7 +66,7 @@ const Navbar = () => {
             <ul className='hidden lg:flex items-center gap-5'>
               {['Home', 'Templates', 'About', 'Pricing', 'Contact'].map((item) => (
                 <li key={item} className='hover:font-normal transition-all'>
-                  <Link href={`/${item.toLowerCase() === 'home' ? '' : item.toLowerCase()}`}>
+                  <Link data-focusable className='p-2' href={`/${item.toLowerCase() === 'home' ? '' : item.toLowerCase()}`}>
                     {item}
                   </Link>
                 </li>

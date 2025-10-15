@@ -14,6 +14,9 @@ const buttonVariants = cva(
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         secondary:
           "bg-transparent text-secondary-foreground border-2 border-[#7332a8] ",
+        footer_btn:"bg-transparent text-secondary-foreground border-2 border-[#7332a8] text-white bold hover:bg-transparent hover:border-blue-800",
+        outline:"border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 p-2",
+        subscribe:"bg-white text-black shadow-xs hover:bg-white/90",
      
       },
       size: {
