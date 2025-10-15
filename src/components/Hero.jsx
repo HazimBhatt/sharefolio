@@ -37,6 +37,7 @@ const Hero = () => {
 
         <Link href="/templates">
           <Button
+            data-focusable
             variant="secondary"
             className="cursor-pointer flex items-center justify-around w-full px-4 py-2 h-12"
           >

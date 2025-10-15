@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
+import FocusCursor from '@/components/FocusCursor';
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -31,7 +32,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ModeToggle />
+          <FocusCursor />
           <Navbar />
+
           {children}
         </ThemeProvider>
       </body>

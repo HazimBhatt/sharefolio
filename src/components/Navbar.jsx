@@ -77,12 +77,12 @@ const Navbar = () => {
           {/* Desktop Authe Buttons */}
           <div className="hidden lg:flex items-center gap-5">
             <Link href={"/login"}>
-              <Button variant={"secondary"} className='cursor-pointer w-32 h-10 px-8'>
+              <Button data-focusable  variant={"secondary"} className='cursor-pointer w-32 h-10 px-8  '>
                 Log In <LogIn size={16} />
               </Button>
             </Link>
             <Link href={"/signup"}>
-              <Button variant={"primary"} className='cursor-pointer w-32 h-10 px-8'>
+              <Button  data-focusable variant={"primary"} className='cursor-pointer w-32 h-10 px-8'>
                 Sign Up <Waypoints size={16} />
               </Button>
             </Link>
@@ -90,6 +90,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
+          
             className="lg:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
@@ -110,6 +111,7 @@ const Navbar = () => {
             {['Home', 'Templates', 'About', 'Pricing', 'Contact'].map((item) => (
               <li key={item}>
                 <Link 
+                data-focusable
                   href={`/${item.toLowerCase() === 'home' ? '' : item.toLowerCase()}`}
                   className='text-xl font-medium py-2 block hover:text-primary transition-colors'
                   onClick={() => setIsOpen(false)}
@@ -123,12 +125,12 @@ const Navbar = () => {
           {/* Mobile Auth Buttons */}
           <div className="flex flex-col gap-4 pt-8 border-t">
             <Link href={"/login"} onClick={() => setIsOpen(false)}>
-              <Button variant={"secondary"} className='w-full h-12 text-base'>
+              <Button variant={"secondary"} className='w-full h-12 text-base' data-focusable>
                 Log In <LogIn size={18} />
               </Button>
             </Link>
             <Link href={"/signup"} onClick={() => setIsOpen(false)}>
-              <Button variant={"primary"} className='w-full h-12 text-base'>
+              <Button variant={"primary"} className='w-full h-12 text-base' data-focusable>
                 Sign Up <Waypoints size={18} />
               </Button>
             </Link>

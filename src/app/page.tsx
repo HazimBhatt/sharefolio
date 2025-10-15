@@ -9,6 +9,7 @@ export default function Home() {
     <Templates/>
     <Working/>
     <Features/>
+
     </>
   );
 }
