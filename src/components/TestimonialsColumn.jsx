@@ -396,7 +396,6 @@ const TestimonialsAndFaq = () => {
                 </p>
               </div>
               <FaqSection />
-              
               {/* Additional CTA */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}

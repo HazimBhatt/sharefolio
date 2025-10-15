@@ -102,7 +102,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       <div className={`
-        lg:hidden fixed inset-0 z-40 bg-white dark:bg-black transition-all duration-300 ease-in-out
+        lg:hidden poppins-regular fixed inset-0 z-40 bg-white dark:bg-black transition-all duration-300 ease-in-out
         ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}
       `}>
         <div className="pt-24 pb-8 px-6 h-full flex flex-col">
