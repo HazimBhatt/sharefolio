@@ -107,6 +107,7 @@ const steps = [
                   key={index}
                   variants={item}
                   className="group"
+                  data-focusable
                 >
                   <div className="relative h-full bg-background border rounded-xl p-6 shadow-sm hover:shadow-md transition-all">
                     <div className="flex flex-col h-full">
@@ -125,9 +126,9 @@ const steps = [
                         <p className="text-muted-foreground mb-6">{step.description}</p>
 
                         <div className="mt-auto w-full">
-                          <div className="flex items-center justify-center text-sm font-medium text-primary">
+                          <div className="flex items-center justify-center  font-medium text-primary">
                             <Link href={"/about"} className="mr-2">Learn more</Link>
-                            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            <ChevronRight className="mt-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
                           </div>
                         </div>
                       </div>
@@ -180,7 +181,7 @@ const steps = [
           className="mt-20 text-center"
         >
           <Link href={"/generate"}>
-            <Button size="lg" className="px-8 text-white cursor-pointer py-6 text-base">
+            <Button size="lg" data-focusable className="px-8 text-white cursor-pointer py-6 text-base">
               Create One For You  <ArrowBigRight />
             </Button>
           </Link>

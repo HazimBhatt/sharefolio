@@ -1,8 +1,15 @@
 'use client';
 import { motion, useInView } from 'framer-motion';
 import {
-    Sparkles, LayoutTemplate, BarChart, Zap,
-    ShieldCheck, Languages, Smartphone, RefreshCw
+    Sparkles,
+    Paintbrush,
+    Code,
+    Camera,
+    BookOpen,
+    Briefcase,
+    GraduationCap,
+    Megaphone,
+    Lightbulb
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useRef } from 'react';
@@ -14,16 +21,57 @@ export default function Features() {
     const isInView = useInView(containerRef, { once: true, margin: "-100px" });
     // const router = useRouter();
 
-    const features = [
-        { title: "AI-Powered Generation", icon: Sparkles, color: "text-purple-500", description: "Advanced AI technology crafts personalized, context-aware proposals that resonate with clients." },
-        { title: "Professional Templates", icon: LayoutTemplate, color: "text-blue-500", description: "Access 50+ industry-specific templates designed by hiring experts across various fields." },
-        { title: "Success Prediction", icon: BarChart, color: "text-green-500", description: "AI analyzes your proposal and predicts your chances of winning the project." },
-        { title: "One-Click Optimization", icon: Zap, color: "text-yellow-500", description: "Instantly improve existing proposals with our optimization engine for better results." },
-        { title: "Enterprise Security", icon: ShieldCheck, color: "text-red-500", description: "top-grade encryption ensures your data and client information remain completely private." },
-        { title: "Multi-Language Support", icon: Languages, color: "text-cyan-500", description: "Generate proposals in 15+ languages with native-level fluency and cultural adaptation." },
-        { title: "Mobile Optimization", icon: Smartphone, color: "text-pink-500", description: "Full mobile experience with native apps for iOS and Android to create proposals on-the-go." },
-        { title: "Continuous Updates", icon: RefreshCw, color: "text-orange-500", description: "Regular feature updates and template expansions based on market trends and user feedback." }
-    ];
+ const professions = [
+  {
+    title: "Designers",
+    icon: Paintbrush,
+    color: "text-pink-500",
+    description: "Showcase your creative work with sleek, visual-first portfolio templates."
+  },
+  {
+    title: "Web Developers",
+    icon: Code,
+    color: "text-blue-500",
+    description: "Highlight your projects, GitHub repos, and tech stack with clean layouts."
+  },
+  {
+    title: "Photographers",
+    icon: Camera,
+    color: "text-purple-500",
+    description: "Display your photo galleries in stunning, high-resolution formats."
+  },
+  {
+    title: "Writers & Bloggers",
+    icon: BookOpen,
+    color: "text-yellow-500",
+    description: "Share your voice with content-focused templates built for storytelling."
+  },
+  {
+    title: "Freelancers",
+    icon: Briefcase,
+    color: "text-green-500",
+    description: "Present your services, testimonials, and past work to attract new clients."
+  },
+  {
+    title: "Students",
+    icon: GraduationCap,
+    color: "text-cyan-500",
+    description: "Create academic portfolios to showcase projects, achievements, and resumes."
+  },
+  {
+    title: "Marketers",
+    icon: Megaphone,
+    color: "text-red-500",
+    description: "Promote campaigns, case studies, and brand work with conversion-ready layouts."
+  },
+  {
+    title: "Consultants",
+    icon: Lightbulb,
+    color: "text-orange-500",
+    description: "Build trust with polished portfolios that highlight your expertise and results."
+  }
+];
+
 
     const container = {
         hidden: { opacity: 0 },
@@ -42,9 +90,9 @@ export default function Features() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        className="inline-flex items-center bg-[#7332a8] gap-2 px-4 py-2 mb-4 text-sm font-medium rounded-full "
+                        className="inline-flex text-white items-center bg-[#7332a8] gap-2 px-4 py-2 mb-4 text-sm font-medium rounded-full "
                     >
-                        <Sparkles className="w-4 h-4 text-primary" />
+                        <Sparkles className="w-4 h-4 text-white" />
                         <span>POWERFUL FEATURES</span>
                     </motion.div>
 
@@ -52,7 +100,7 @@ export default function Features() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.1 }}
-                        className="text-3xl md:text-4xl lg:text-5xl font-bold"
+                        className="text-3xl md:text-4xl md:leading-16 lg:text-5xl font-bold"
                     >
                         Build Stunning Portfolios <br />
                         <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">
@@ -77,8 +125,8 @@ export default function Features() {
                     initial="hidden"
                     animate={isInView ? "show" : "hidden"}
                 >
-                    {features.map(({ title, icon: Icon, color, description }, index) => (
-                        <motion.div key={index} variants={item} className="w-full">
+                    {professions.map(({ title, icon: Icon, color, description }, index) => (
+                        <motion.div key={index} variants={item} data-focusable className="w-full">
                             <Card
                                 className="h-full cursor-pointer border shadow-sm hover:shadow-md transition-all">
                                 <CardHeader className="flex flex-row justify-between items-start pb-3">

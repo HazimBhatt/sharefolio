@@ -82,7 +82,7 @@ const Navbar = () => {
               </Button>
             </Link>
             <Link href={"/signup"}>
-              <Button  data-focusable variant={"primary"} className='cursor-pointer w-32 h-10 px-8'>
+              <Button  data-focusable variant={"primary"} className='cursor-pointer text-white w-32 h-10 px-8'>
                 Sign Up <Waypoints size={16} />
               </Button>
             </Link>

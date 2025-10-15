@@ -36,7 +36,7 @@ export default function FocusCursor() {
     };
   }, []);
 
-  // 🎞️ Rotation control (spin when idle, stop on hover)
+  // Rotation control (spin when idle, stop on hover)
   useEffect(() => {
     if (!hovering) {
       rotateControls.start({
@@ -74,7 +74,7 @@ export default function FocusCursor() {
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
         <div
-          className="bg-white rounded-full"
+          className="bg-black dark:bg-white rounded-full"
           style={{ width: dotSize, height: dotSize }}
         />
       </motion.div>
@@ -107,7 +107,7 @@ export default function FocusCursor() {
           {["tl", "tr", "bl", "br"].map((corner) => (
             <div
               key={corner}
-              className="absolute w-4 h-4 border-white"
+              className="absolute w-4 h-4 border-black dark:border-white"
               style={{
                 borderWidth: "3px",
                 padding:"2px",
