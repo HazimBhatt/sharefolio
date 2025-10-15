@@ -243,6 +243,7 @@ const Templates = () => {
                         {/* Action Buttons */}
                         <div className="flex gap-3 mt-auto">
                           <motion.a
+                            data-focusable
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             href={template.demoUrl}
@@ -253,6 +254,7 @@ const Templates = () => {
                           </motion.a>
                           
                           <motion.a
+                            data-focusable
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             href={template.createUrl}
@@ -296,6 +298,7 @@ const Templates = () => {
                Premium Templates <Terminal size={15}/>
               </motion.button>
               <motion.button
+                data-focusable
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-6 py-3 flex items-center gap-3 text-white text-center  justify-center rounded-lg font-medium transition-all duration-200"

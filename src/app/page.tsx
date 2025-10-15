@@ -5,8 +5,11 @@ export default function Home() {
   return (
     <>
     <Hero/>
+
     <Templates/>
+
     <Working/>
+
     </>
   );
 }
