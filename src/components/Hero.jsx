@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 const Hero = () => {
   const {theme } = useTheme()
@@ -12,7 +12,7 @@ const Hero = () => {
       <div className="left-side-hero flex gap-5 flex-col text-center md:text-left">
         <h1 className=" text-4xl sm:text-5xl font-semibold leading-snug">
           Your Dream{" "}
-          <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/20 after:to-transparent after:skew-x-12 after:animate-pulse ">
+          <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse ">
             Portfolio.
           </span>
           <br />

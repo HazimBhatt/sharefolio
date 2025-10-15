@@ -172,7 +172,7 @@ const Templates = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-            Choose Your  <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/20 after:to-transparent after:skew-x-12 after:animate-pulse">
+            Choose Your  <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">
            Perfect Template
           </span>
           </h2>
@@ -246,7 +246,7 @@ const Templates = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             href={template.demoUrl}
-                            className="flex items-center justify-center gap-2 flex-1 px-4 py-3 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200"
+                            className="flex items-center justify-center gap-2 dark:hover:border-amber-200 dark:hover:bg-transparent flex-1 px-4 py-3 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200"
                           >
                             <ExternalLink className="w-4 h-4" />
                             View Demo
@@ -281,24 +281,24 @@ const Templates = () => {
           className="text-center mt-16"
         >
           <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-8 border border-border">
-            <h3 className="text-2xl font-bold mb-4">Can't find what you're <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/20 after:to-transparent after:skew-x-12 after:animate-pulse ">
+            <h3 className="text-2xl font-bold mb-4">Can't find what you're <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse ">
             Looking For?
           </span></h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Start from scratch or contact us for custom template solutions tailored to your needs.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 flex-col md:flex-row justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 border flex items-center gap-3 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200"
+                className="px-6 py-3 border flex items-center gap-3 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all text-center justify-center duration-200"
               >
                Premium Templates <Terminal size={15}/>
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 flex items-center gap-3 text-white rounded-lg font-medium transition-all duration-200"
+                className="px-6 py-3 flex items-center gap-3 text-white text-center  justify-center rounded-lg font-medium transition-all duration-200"
                 style={{ backgroundColor: '#7332a8' }}
               >
                 Contact Us <Contact size={15}/>
