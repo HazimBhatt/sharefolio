@@ -73,7 +73,7 @@ const steps = [
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-3xl md:text-4xl leading-16 lg:text-5xl font-bold"
+            className="text-3xl md:text-4xl md:leading-16 lg:text-5xl font-bold"
           >
             Your work deserves the spotlight.   <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">We make it effortless</span>
           </motion.h2>
@@ -180,8 +180,8 @@ const steps = [
           className="mt-20 text-center"
         >
           <Link href={"/generate"}>
-            <Button size="lg" className="px-8 py-6 text-base">
-              Create Your Now  <ArrowBigRight />
+            <Button size="lg" className="px-8 text-white cursor-pointer py-6 text-base">
+              Create One For You  <ArrowBigRight />
             </Button>
           </Link>
         </motion.div>
