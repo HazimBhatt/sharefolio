@@ -1,9 +1,10 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import React,{ useState, useRef, useCallback, useMemo } from 'react'
 import { motion, useInView, useAnimation, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Quote, Sparkles, Star } from 'lucide-react'
+import { Button } from './ui/button'
 
-// Testimonials data with actual content
+
 const testimonialsData = [
   {
     id: 'testimonial1',
@@ -15,7 +16,7 @@ const testimonialsData = [
   },
   {
     id: 'testimonial2', 
-    name: 'Sarah Wilson',
+    name: 'Sarah ',
     company: 'Design Studio',
     role: 'UI/UX Designer',
     text: 'As a designer, I appreciate how Sharefolio showcases my work. The customization options are perfect for creative professionals.',
@@ -39,11 +40,11 @@ const testimonialsData = [
   }
 ]
 
-// FAQ data
+
 const faqData = [
   {
     id: 'faq1',
-    question: 'How do I get started ?',
+    question: 'How do I get started?',
     answer: 'Simply sign up for an account, choose a template that fits your style, and start customizing your portfolio. You can have your portfolio live on a free subdomain in under 10 minutes.'
   },
   {
@@ -63,51 +64,26 @@ const faqData = [
   }
 ]
 
-// Enhanced button component with shadcn-like variants
-const Button = ({ 
-  variant = 'ghost', 
-  className = '', 
-  onClick, 
-  children,
-  ...props 
-}) => {
-  const baseStyles = 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
-  
-  const variants = {
-    default: 'bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2',
-    ghost: 'hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2',
-    outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2',
-  }
-  
-  return (
-    <button
-      className={`${baseStyles} ${variants[variant]} ${className}`}
-      onClick={onClick}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-}
 
-// Enhanced container with better spacing
+
+
 const SmallWrap = ({ children, id, className = '' }) => {
   return (
     <section
       id={id}
-      className={`mx-auto w-full max-w-6xl px-6 sm:px-8 ${className}`}
+      className={`mx-auto w-full max-w-6xl px-4 sm:px-6 ${className}`}
     >
-    
       {children}
     </section>
   )
 }
+
 const cn = (...classes) => classes.filter(Boolean).join(' ')
 
-// Rating Stars Component
+// Memoized Rating Stars Component
 const RatingStars = ({ rating }) => {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-0.5">
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
@@ -122,72 +98,61 @@ const RatingStars = ({ rating }) => {
   )
 }
 
-// Enhanced Testimonials Column with better design
-const TestimonialsColumn = (props) => {
+// Optimized Testimonials Column with reduced animations
+const TestimonialsColumn = React.memo(({ testimonials, isInView, className }) => {
   const controls = useAnimation()
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  useEffect(() => {
-    if (props.isInView) {
-      const interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev + 1) % props.testimonials.length)
-      }, 5000) // Change testimonial every 5 seconds
+  // Memoized testimonial change handler
+  const handleDotClick = useCallback((index) => {
+    setCurrentIndex(index)
+  }, [])
 
-      return () => clearInterval(interval)
-    }
-  }, [props.isInView, props.testimonials.length])
+  // Optimized auto-rotation with cleanup
+  React.useEffect(() => {
+    if (!isInView) return
+    
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % testimonials.length)
+    }, 5000)
 
-  useEffect(() => {
-    if (props.isInView) {
-      controls.start({
-        y: 0,
-        opacity: 1,
-        transition: { duration: 0.6, ease: "easeOut" }
-      })
-    } else {
-      controls.stop()
-    }
-  }, [props.isInView, controls, currentIndex])
+    return () => clearInterval(interval)
+  }, [isInView, testimonials.length])
 
-  const currentTestimonial = props.testimonials[currentIndex]
+  const currentTestimonial = testimonials[currentIndex]
 
   return (
-    <div className={props.className} >
-      <div className="relative h-[420px] sm:h-[480px] overflow-hidden rounded-2xl bg-gradient-to-br from-card to-card/80 border shadow-sm">
-      
+    <div className={className}>
+      <div className="relative h-[400px] overflow-hidden rounded-xl border bg-card shadow-sm">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentTestimonial.id}
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -30, opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 p-8 flex flex-col justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 p-6 flex flex-col justify-center"
           >
-            {/* Quote Icon */}
-            <div className="flex justify-start mb-6">
-              <div className="p-3 rounded-full bg-primary/10 text-primary">
-                <Quote className="h-6 w-6" />
+            <div className="flex justify-start mb-4">
+              <div className="p-2 rounded-full bg-primary/10 text-primary">
+                <Quote className="h-5 w-5" />
               </div>
             </div>
             
-            {/* Testimonial Text */}
-            <p className="text-lg sm:text-xl text-card-foreground/90 leading-relaxed mb-6 font-medium">
+            <p className="text-base text-card-foreground/90 leading-relaxed mb-4 font-medium">
               {currentTestimonial.text}
             </p>
             
-            {/* Rating */}
-            <div className="mb-8">
+            <div className="mb-6">
               <RatingStars rating={currentTestimonial.rating} />
             </div>
             
-            {/* Author Info */}
-            <div className="flex items-center gap-4 mt-auto pt-6 border-t border-border">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-semibold text-lg shadow-sm">
+            <div className="flex items-center gap-3 mt-auto pt-4 border-t border-border">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-semibold text-base shadow-sm">
                 {currentTestimonial.name[0]}
               </div>
               <div className="flex flex-col">
-                <div className="font-semibold text-card-foreground text-lg">
+                <div className="font-semibold text-card-foreground">
                   {currentTestimonial.name}
                 </div>
                 <div className="text-muted-foreground text-sm">
@@ -201,75 +166,72 @@ const TestimonialsColumn = (props) => {
           </motion.div>
         </AnimatePresence>
         
-        {/* Enhanced Dots indicator */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
-          {props.testimonials.map((_, index) => (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5">
+          {testimonials.map((_, index) => (
             <button
               key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex 
                   ? 'bg-primary scale-110' 
                   : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
               }`}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => handleDotClick(index)}
             />
           ))}
         </div>
       </div>
     </div>
   )
-}
+})
 
-// Enhanced FAQ Section Component
-const FaqSection = () => {
+// Memoized FAQ Section
+const FaqSection = React.memo(() => {
+  const [openItem, setOpenItem] = useState('faq1')
+
+  const handleToggle = useCallback((id) => {
+    setOpenItem(prev => prev === id ? null : id)
+  }, [])
+
   return (
-    <div className="space-y-3">
-      {faqData.map((item, index) => (
+    <div className="space-y-2">
+      {faqData.map((item) => (
         <FaqItem
           key={item.id}
+          id={item.id}
           question={item.question}
           answer={item.answer}
-          index={index}
+          isOpen={openItem === item.id}
+          onToggle={handleToggle}
         />
       ))}
     </div>
   )
-}
+})
 
-const FaqItem = ({
-  question,
-  answer,
-  index
-}) => {
-  const [isOpen, setIsOpen] = useState(index === 0) // First item open by default
+// Optimized FAQ Item with reduced animations
+const FaqItem = React.memo(({ id, question, answer, isOpen, onToggle }) => {
+  const handleClick = useCallback(() => {
+    onToggle(id)
+  }, [id, onToggle])
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      className={cn(
-        'border rounded-xl bg-card/50 backdrop-blur-sm transition-all duration-200 hover:shadow-sm',
-        isOpen && 'shadow-sm border-primary/20 bg-card'
-      )}
-    >
+    <div className={cn(
+      'border rounded-lg bg-card/50 transition-all duration-200 hover:shadow-sm',
+      isOpen && 'shadow-sm border-primary/20 bg-card'
+    )}>
       <Button
         variant="ghost"
-        onClick={() => setIsOpen(!isOpen)}
-        className="h-auto w-full justify-between px-6 py-5 text-left hover:bg-accent/30 rounded-xl"
+        onClick={handleClick}
+        className="h-auto w-full justify-between px-4 py-4 text-left hover:bg-accent/30 rounded-lg"
       >
-        <h3
-          className={cn(
-            'text-base font-semibold pr-8 transition-colors',
-            isOpen ? 'text-primary' : 'text-card-foreground'
-          )}
-        >
+        <h3 className={cn(
+          'text-sm font-medium pr-6 transition-colors',
+          isOpen ? 'text-primary' : 'text-card-foreground'
+        )}>
           {question}
         </h3>
         <motion.div
-          animate={{
-            rotate: isOpen ? 180 : 0,
-          }}
+          animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
           className={cn(
             'flex-shrink-0 transition-colors p-1 rounded-full',
@@ -283,130 +245,126 @@ const FaqItem = ({
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{
-              height: 'auto',
-              opacity: 1,
-              transition: { duration: 0.3, ease: 'easeOut' }
-            }}
-            exit={{
-              height: 0,
-              opacity: 0,
-              transition: { duration: 0.2, ease: 'easeIn' }
-            }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-5">
-              <motion.p
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="text-muted-foreground leading-relaxed"
-              >
+            <div className="px-4 pb-4">
+              <p className="text-muted-foreground leading-relaxed text-sm">
                 {answer}
-              </motion.p>
+              </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
-}
+})
 
-// Main Combined Component with enhanced design
+// Main Component with performance optimizations
 const TestimonialsAndFaq = () => {
   const sectionRef = useRef(null)
-  const isSectionInView = useInView(sectionRef, { once: true, margin: '-50px' })
   const testimonialsRef = useRef(null)
-  const isTestimonialsInView = useInView(testimonialsRef, { margin: '-50px' })
+  
+  const isSectionInView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const isTestimonialsInView = useInView(testimonialsRef, { once: true, margin: '-50px' })
+
+  // Memoized testimonials data
+  const memoizedTestimonials = useMemo(() => testimonialsData, [])
 
   return (
-    <div className="w-full overflow-hidden bg-gradient-to-b from-background to-muted/20 py-20 md:py-32" ref={sectionRef}>
+    <div 
+      ref={sectionRef}
+      className="w-full bg-background overflow-x-hidden py-16 md:py-24"
+    >
       <SmallWrap className="relative">
-        {/* Background decoration */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
+        {/* Simplified background decoration */}
+        <div className="absolute top-20 -right-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 -left-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl"></div>
         
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-16 text-center relative"
+          animate={isSectionInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="mb-12 text-center relative"
         >
-            <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
-            className="inline-flex items-center bg-[#7332a8] gap-2 px-4 py-2 mb-7 text-sm font-medium rounded-full text-white "
-          >
-            <Sparkles className="w-4 h-4 text-primary " />
+          <div className="inline-flex text-white items-center bg-[#7332a8] gap-2 px-4 py-2 mb-4 text-sm font-medium rounded-full ">
+            <Sparkles className="w-3 h-3" />
             <span>FROM OUR USERS</span>
-          </motion.div>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-4 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-            Loved by <br /><span className='bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse'> Creators Worldwide</span>
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl mb-4">
+            Loved by{' '}
+            <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">
+              Creators Worldwide
+            </span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-base leading-relaxed">
             Join thousands of professionals who trust Sharefolio to showcase their work and grow their careers
           </p>
         </motion.div>
 
         {/* Combined Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 relative">
-          {/* Testimonials - Left Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 relative">
+          {/* Testimonials */}
           <div ref={testimonialsRef} className="flex flex-col justify-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
+              animate={isSectionInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold tracking-tight sm:text-3xl mb-3">
-                  What Our <span className='bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse'>Users</span> Say
+              <div className="mb-6">
+                <h3 className="text-xl font-bold tracking-tight sm:text-2xl mb-2">
+                  What Our{' '}
+                  <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">
+                    Users
+                  </span>{' '}
+                  Say
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Real stories from creators who transformed their online presence with Sharefolio
                 </p>
               </div>
               <TestimonialsColumn
-                testimonials={testimonialsData}
+                testimonials={memoizedTestimonials}
                 isInView={isTestimonialsInView}
                 className="w-full"
               />
             </motion.div>
           </div>
 
-          {/* FAQ - Right Side */}
+          {/* FAQ */}
           <div className="flex flex-col justify-center">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
+              animate={isSectionInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="flex-1"
             >
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold tracking-tight sm:text-3xl mb-3">
-                  Frequently Asked <span className='bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r after:from-black/40 dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse'>Questions</span>
+              <div className="mb-6">
+                <h3 className="text-xl font-bold tracking-tight sm:text-2xl mb-2">
+                  Frequently Asked{' '}
+                  <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">
+                    Questions
+                  </span>
                 </h3>
-                <p className="text-muted-foreground">
-                  Everything you need to know about Sharefolio and how to get started with your perfect portfolio.
+                <p className="text-muted-foreground text-sm">
+                  Everything you need to know about Sharefolio and how to get started
                 </p>
               </div>
               <FaqSection />
-              {/* Additional CTA */}
+              
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-                className="mt-8 p-6 rounded-xl bg-primary/5 border border-primary/10"
+                animate={isSectionInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.3, delay: 0.3 }}
+                className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/10"
               >
-                <p className="text-sm text-muted-foreground mb-3">
+                <p className="text-sm text-muted-foreground mb-2">
                   Still have questions?
                 </p>
-                <Button variant="primary"  data-focusable className="bg-[#7332a8] w-full p-3 hover:bg-[#7332a8]/90 cursor-pointer text-white">
+                <Button variant="primary" data-focusable className="w-full p-3 cursor-pointer">
                   Contact Support
                 </Button>
               </motion.div>
@@ -418,4 +376,4 @@ const TestimonialsAndFaq = () => {
   )
 }
 
-export default TestimonialsAndFaq
+export default React.memo(TestimonialsAndFaq)

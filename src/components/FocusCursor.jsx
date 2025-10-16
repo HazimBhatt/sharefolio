@@ -69,7 +69,7 @@ export default function FocusCursor() {
     <>
       {/* Center dot */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999]"
+        className="hidden md:block md:fixed top-0 left-0 pointer-events-none z-[9999]"
         animate={{ x: pos.x - dotSize / 2, y: pos.y - dotSize / 2 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
@@ -81,7 +81,7 @@ export default function FocusCursor() {
 
       {/* Corners */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        className="hidden md:block md:fixed top-0 left-0 pointer-events-none z-[9998]"
         animate={{
           x: hovering
             ? expanded.x - expanded.w / 2
