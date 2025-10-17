@@ -180,11 +180,11 @@ const steps = [
           transition={{ duration: 0.3 }}
           className="mt-20 text-center"
         >
-          <Link href={"/generate"}>
+          {/* <Link href={"/generate"}>
             <Button size="lg" data-focusable className="px-8 text-white cursor-pointer py-6 text-base">
               Create One For You  <ArrowBigRight />
             </Button>
-          </Link>
+          </Link> */}
         </motion.div>
       </div>
     </section>

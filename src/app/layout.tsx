@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
 import FocusCursor from '@/components/FocusCursor';
-
+import Footer from "@/components/Footer"
 const poppins = Poppins({
   variable: "--font-poppins",
   weight: ["300", "400", "500", "600", "700"], 
@@ -36,6 +36,7 @@ export default function RootLayout({
           <Navbar />
 
           {children}
+      <Footer/>
         </ThemeProvider>
       </body>
     </html>
