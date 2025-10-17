@@ -64,8 +64,8 @@ const steps = [
             transition={{ duration: 0.3 }}
             className="inline-flex items-center bg-[#7332a8] gap-2 px-4 py-2 mb-4 text-sm font-medium rounded-full text-foreground"
           >
-            <Sparkles className="w-4 h-4 text-primary " />
-            <span>EFFORTLESS PROCESS</span>
+            <Sparkles className="w-4 h-4 text-white " />
+            <span className='text-white'>EFFORTLESS PROCESS</span>
           </motion.div>
 
           <motion.h2

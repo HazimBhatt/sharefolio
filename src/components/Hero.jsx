@@ -51,14 +51,14 @@ const Hero = () => {
       <div className="right-side-hero">
        {
         theme=="light"?( <Image
-          src="/hero-light.png"
+          src="/hero-light.webp"
           className="rounded-md object-cover"
           alt="hero image"
           width={800}
           height={600}
           priority
         />): <Image
-          src="/hero-dark.png"
+          src="/hero-dark.webp"
           className="rounded-md object-cover"
           alt="hero image"
           width={800}

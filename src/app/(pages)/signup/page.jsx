@@ -139,22 +139,22 @@ const SignUp = () => {
     setShowConfirmPassword(prev => !prev);
   }, []);
 
-  // Memoized background elements to prevent re-renders
+  // Simplified background elements - removed blur effects
   const backgroundElements = useMemo(() => (
     <>
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#7332a8] rounded-full blur-[120px] opacity-20" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#b266ff] rounded-full blur-[120px] opacity-20" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#7332a8] rounded-full opacity-10" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#b266ff] rounded-full opacity-10" />
     </>
   ), []);
 
   const visualSection = useMemo(() => (
     <div className="w-full max-w-2xl">
       <div className="relative h-[500px] flex items-center justify-center">
-        {/* Static Orb */}
-        <div className="absolute w-56 h-56 bg-[#7332a8] rounded-full blur-xl opacity-60" />
+        {/* Static Orb - removed blur */}
+        <div className="absolute w-56 h-56 bg-[#7332a8] rounded-full opacity-40" />
 
-        {/* Static Cards */}
-        <div className="absolute top-16 left-16 bg-[#7332a8] p-3 rounded-2xl shadow-2xl backdrop-blur-sm border border-white/20">
+        {/* Static Cards - removed backdrop blur */}
+        <div className="absolute top-16 left-16 bg-[#7332a8] p-3 rounded-2xl shadow-lg border border-white/20">
           <div className="flex items-center gap-2 text-white">
             <Star className="w-5 h-5" fill="currentColor" />
             <div>
@@ -164,16 +164,16 @@ const SignUp = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-16 right-16 bg-background/80 backdrop-blur-sm border border-border p-3 rounded-2xl shadow-2xl">
+        <div className="absolute bottom-16 right-16 bg-background/90 border border-border p-3 rounded-2xl shadow-lg">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full" />
             <span className="text-sm font-medium text-foreground">Secure & Fast</span>
           </div>
         </div>
 
-        {/* Central Content */}
+        {/* Central Content - removed backdrop blur */}
         <div className="relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-background/80 backdrop-blur-sm border border-border/50 shadow-2xl mb-4">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-background/90 border border-border/50 shadow-lg mb-4">
             <Sparkles className="w-4 h-4 text-[#7332a8]" />
             <span className="font-semibold text-foreground text-sm">Start Your Journey</span>
             <Zap className="w-4 h-4 text-[#7332a8]" />
@@ -183,7 +183,7 @@ const SignUp = () => {
             ✨ 🚀 💫
           </div>
           
-          <p className="text-muted-foreground max-w-xs mx-auto backdrop-blur-sm bg-background/30 rounded-lg p-3 text-sm">
+          <p className="text-muted-foreground max-w-xs mx-auto bg-background/50 rounded-lg p-3 text-sm">
             Join thousands of creators building amazing portfolios
           </p>
         </div>
@@ -219,7 +219,7 @@ const SignUp = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full border border-border bg-[#7332a8] backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full border border-border bg-[#7332a8]">
             <Sparkles className="w-4 h-4 text-white" />
             <span className="text-sm font-medium text-white">Get Started!</span>
             <Zap className="w-4 h-4 text-white" />
@@ -227,7 +227,7 @@ const SignUp = () => {
 
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
             Start Your{" "}
-            <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse">
+            <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">
               Journey
             </span>
           </h1>
@@ -240,12 +240,12 @@ const SignUp = () => {
           {/* Sign Up Form */}
           <div className="w-full max-w-md">
             <div className="relative">
-              <div className="absolute -inset-1 bg-[#7332a8] rounded-3xl blur opacity-30" />
+              <div className="absolute -inset-1 bg-[#7332a8] rounded-3xl opacity-20" />
               
-              <div className="relative bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-2xl">
+              <div className="relative bg-card/90 border border-border/50 rounded-2xl p-6 shadow-lg">
                 {/* Form Header */}
                 <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7332a8] rounded-2xl mb-3 shadow-lg">
+                  <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7332a8] rounded-2xl mb-3 shadow">
                     <Rocket className="w-6 h-6 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-foreground mb-2">
@@ -272,7 +272,7 @@ const SignUp = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Enter your full name"
-                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm"
+                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200"
                         required
                       />
                     </div>
@@ -293,7 +293,7 @@ const SignUp = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Enter your email"
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm ${
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
                           touched.email && errors.email ? 'border-red-500' : 'border-border'
                         }`}
                         required
@@ -322,7 +322,7 @@ const SignUp = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Create a strong password"
-                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm ${
+                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
                           touched.password && errors.password ? 'border-red-500' : 'border-border'
                         }`}
                         required
@@ -339,7 +339,7 @@ const SignUp = () => {
                     
                     {/* Password Requirements */}
                     {formData.password && (
-                      <div className="space-y-2 p-3 bg-background/50 rounded-lg border border-border/50">
+                      <div className="space-y-2 p-3 bg-background/70 rounded-lg border border-border/50">
                         <p className="text-xs font-medium text-foreground">Password Requirements:</p>
                         <div className="grid grid-cols-2 gap-1">
                           <PasswordRequirement 
@@ -389,7 +389,7 @@ const SignUp = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Confirm your password"
-                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm ${
+                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
                           touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-border'
                         }`}
                         required
@@ -415,7 +415,7 @@ const SignUp = () => {
                   <label className="flex items-start space-x-2">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-[#7332a8] border-border rounded focus:ring-[#7332a8] bg-background/50 mt-1"
+                      className="w-4 h-4 text-[#7332a8] border-border rounded focus:ring-[#7332a8] bg-background/70 mt-1"
                       required
                     />
                     <span className="text-sm text-muted-foreground">
@@ -459,7 +459,7 @@ const SignUp = () => {
                     <div className="w-full border-t border-border/50" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-card text-muted-foreground backdrop-blur-sm">Or continue with</span>
+                    <span className="px-3 bg-card text-muted-foreground">Or continue with</span>
                   </div>
                 </div>
 
@@ -467,7 +467,7 @@ const SignUp = () => {
                 <Button
                   variant="secondary"
                    data-focusable
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3 h-12 border border-border/50 hover:border-[#7332a8]/50 transition-all duration-200 backdrop-blur-sm bg-background/50"
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3 h-12 border border-border/50 hover:border-[#7332a8]/50 transition-all duration-200 bg-background/70"
                 >
                   <img 
                     src="/google.svg" 

@@ -129,23 +129,23 @@ const Contact = () => {
     });
   }, [formData, errors]);
 
-  // Memoized background elements
+  // Simplified background elements - removed blur effects
   const backgroundElements = useMemo(() => (
     <>
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#7332a8] rounded-full blur-[120px] opacity-20" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#b266ff] rounded-full blur-[120px] opacity-20" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#5a2786] rounded-full blur-[100px] opacity-10" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#7332a8] rounded-full opacity-10" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#b266ff] rounded-full opacity-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#5a2786] rounded-full opacity-5" />
     </>
   ), []);
 
   const contactInfo = useMemo(() => (
     <div className="w-full max-w-md">
       <div className="relative h-[500px] flex items-center justify-center">
-        {/* Static Orb */}
-        <div className="absolute w-56 h-56 bg-[#7332a8] rounded-full blur-xl opacity-60" />
+        {/* Static Orb - removed blur */}
+        <div className="absolute w-56 h-56 bg-[#7332a8] rounded-full opacity-40" />
 
-        {/* Contact Info Cards */}
-        <div className="absolute top-20 left-8 bg-[#7332a8] p-4 rounded-2xl shadow-2xl backdrop-blur-sm border border-white/20">
+        {/* Contact Info Cards - removed backdrop blur */}
+        <div className="absolute top-20 left-8 bg-[#7332a8] p-4 rounded-2xl shadow-lg border border-white/20">
           <div className="flex items-center gap-3 text-white">
             <Mail className="w-5 h-5" />
             <div>
@@ -155,7 +155,7 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="absolute top-40 right-12 bg-background/80 backdrop-blur-sm border border-border p-4 rounded-2xl shadow-2xl">
+        <div className="absolute top-40 right-12 bg-background/90 border border-border p-4 rounded-2xl shadow-lg">
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-[#7332a8]" />
             {/* <div>
@@ -165,7 +165,7 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-32 left-12 bg-background/80 backdrop-blur-sm border border-border p-4 rounded-2xl shadow-2xl">
+        <div className="absolute bottom-32 left-12 bg-background/90 border border-border p-4 rounded-2xl shadow-lg">
           <div className="flex items-center gap-3">
             <MapPin className="w-5 h-5 text-[#7332a8]" />
             <div>
@@ -175,9 +175,9 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Central Content */}
+        {/* Central Content - removed backdrop blur */}
         <div className="relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-background/80 backdrop-blur-sm border border-border/50 shadow-2xl mb-4">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-background/90 border border-border/50 shadow-lg mb-4">
             <Sparkles className="w-4 h-4 text-[#7332a8]" />
             <span className="font-semibold text-foreground text-sm">Get In Touch</span>
             <Zap className="w-4 h-4 text-[#7332a8]" />
@@ -187,7 +187,7 @@ const Contact = () => {
             💬 📧 ✨
           </div>
           
-          <p className="text-muted-foreground max-w-xs mx-auto backdrop-blur-sm bg-background/30 rounded-lg p-3 text-sm">
+          <p className="text-muted-foreground max-w-xs mx-auto bg-background/50 rounded-lg p-3 text-sm">
             We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
         </div>
@@ -210,7 +210,7 @@ const Contact = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-border bg-[#7332a8] backdrop-blur-sm ">
+          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-border bg-[#7332a8]">
             <Sparkles className="w-4 h-4 text-white" />
             <span className="text-sm font-medium text-white">Contact Us</span>
             <Zap className="w-4 h-4 text-white" />
@@ -218,7 +218,7 @@ const Contact = () => {
 
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
             Let&apos;s{" "}
-            <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text relative after:absolute after:inset-0 after:bg-gradient-to-r sm:after:from-black/40 sm:dark:after:from-white/40 after:to-transparent after:skew-x-12 after:animate-pulse]">
+            <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">
               Connect
             </span>
           </h1>
@@ -231,12 +231,12 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="w-full max-w-2xl">
             <div className="relative">
-              <div className="absolute -inset-1 bg-[#7332a8] rounded-3xl blur opacity-30" />
+              <div className="absolute -inset-1 bg-[#7332a8] rounded-3xl opacity-20" />
               
-              <div className="relative bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl p-8 shadow-2xl">
+              <div className="relative bg-card/90 border border-border/50 rounded-2xl p-8 shadow-lg">
                 {/* Form Header */}
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7332a8] rounded-2xl mb-4 shadow-lg">
+                  <div className="inline-flex items-center justify-center w-14 h-14 bg-[#7332a8] rounded-2xl mb-4 shadow">
                     <MessageSquare className="w-6 h-6 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-foreground mb-2">
@@ -265,7 +265,7 @@ const Contact = () => {
                           onChange={handleChange}
                           onBlur={handleBlur}
                           placeholder="Enter your full name"
-                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm ${
+                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
                             touched.name && errors.name ? 'border-red-500' : 'border-border'
                           }`}
                           required
@@ -293,7 +293,7 @@ const Contact = () => {
                           onChange={handleChange}
                           onBlur={handleBlur}
                           placeholder="Enter your email"
-                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm ${
+                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
                             touched.email && errors.email ? 'border-red-500' : 'border-border'
                           }`}
                           required
@@ -322,7 +322,7 @@ const Contact = () => {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="Enter your phone number"
-                          className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm"
+                          className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200"
                         />
                       </div>
                     </div>
@@ -341,7 +341,7 @@ const Contact = () => {
                           value={formData.subject}
                           onChange={handleChange}
                           placeholder="What's this about?"
-                          className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm"
+                          className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200"
                         />
                       </div>
                     </div>
@@ -362,7 +362,7 @@ const Contact = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Tell us about your project or inquiry..."
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/50 text-foreground transition-colors duration-200 backdrop-blur-sm resize-none ${
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 resize-none ${
                           touched.message && errors.message ? 'border-red-500' : 'border-border'
                         }`}
                         required
@@ -393,7 +393,6 @@ const Contact = () => {
                       <>
                         <span>Send Message</span>
                         <Send className="w-5 h-5" />
-                        {/* <Rocket className="w-4 h-4" /> */}
                       </>
                     )}
                   </motion.button>
