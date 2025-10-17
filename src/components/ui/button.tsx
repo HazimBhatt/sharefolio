@@ -50,6 +50,8 @@ function Button({
   return (
     <Comp
       data-slot="button"
+      // make buttons focusable by the custom FocusCursor by default - there is no  everytime we'll have this there always 
+      data-focusable
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

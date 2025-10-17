@@ -103,7 +103,7 @@ const SignUp = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    
+
     // Mark all fields as touched
     setTouched({
       email: true,
@@ -117,8 +117,8 @@ const SignUp = () => {
     validateField("confirmPassword", formData.confirmPassword);
 
     // Check if form is valid
-    const isFormValid = !errors.email && !errors.password && !errors.confirmPassword && 
-                       formData.email && formData.password && formData.confirmPassword && 
+    const isFormValid = !errors.email && !errors.password && !errors.confirmPassword &&
+                       formData.email && formData.password && formData.confirmPassword &&
                        formData.password === formData.confirmPassword && isPasswordStrong;
 
     if (!isFormValid) {
@@ -178,11 +178,11 @@ const SignUp = () => {
             <span className="font-semibold text-foreground text-sm">Start Your Journey</span>
             <Zap className="w-4 h-4 text-[#7332a8]" />
           </div>
-          
+
           <div className="text-3xl font-bold text-foreground mb-3">
             ✨ 🚀 💫
           </div>
-          
+
           <p className="text-muted-foreground max-w-xs mx-auto bg-background/50 rounded-lg p-3 text-sm">
             Join thousands of creators building amazing portfolios
           </p>
@@ -241,7 +241,7 @@ const SignUp = () => {
           <div className="w-full max-w-md">
             <div className="relative">
               <div className="absolute -inset-1 bg-[#7332a8] rounded-3xl opacity-20" />
-              
+
               <div className="relative bg-card/90 border border-border/50 rounded-2xl p-6 shadow-lg">
                 {/* Form Header */}
                 <div className="text-center mb-6">
@@ -336,31 +336,31 @@ const SignUp = () => {
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    
+
                     {/* Password Requirements */}
                     {formData.password && (
                       <div className="space-y-2 p-3 bg-background/70 rounded-lg border border-border/50">
                         <p className="text-xs font-medium text-foreground">Password Requirements:</p>
                         <div className="grid grid-cols-2 gap-1">
-                          <PasswordRequirement 
-                            met={passwordRequirements.minLength} 
-                            text="At least 8 characters" 
+                          <PasswordRequirement
+                            met={passwordRequirements.minLength}
+                            text="At least 8 characters"
                           />
-                          <PasswordRequirement 
-                            met={passwordRequirements.hasUpperCase} 
-                            text="One uppercase letter" 
+                          <PasswordRequirement
+                            met={passwordRequirements.hasUpperCase}
+                            text="One uppercase letter"
                           />
-                          <PasswordRequirement 
-                            met={passwordRequirements.hasLowerCase} 
-                            text="One lowercase letter" 
+                          <PasswordRequirement
+                            met={passwordRequirements.hasLowerCase}
+                            text="One lowercase letter"
                           />
-                          <PasswordRequirement 
-                            met={passwordRequirements.hasNumber} 
-                            text="One number" 
+                          <PasswordRequirement
+                            met={passwordRequirements.hasNumber}
+                            text="One number"
                           />
-                          <PasswordRequirement 
-                            met={passwordRequirements.hasSpecialChar} 
-                            text="One special character" 
+                          <PasswordRequirement
+                            met={passwordRequirements.hasSpecialChar}
+                            text="One special character"
                           />
                         </div>
                       </div>
@@ -469,9 +469,9 @@ const SignUp = () => {
                    data-focusable
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 h-12 border border-border/50 hover:border-[#7332a8]/50 transition-all duration-200 bg-background/70"
                 >
-                  <img 
-                    src="/google.svg" 
-                    alt="Google" 
+                  <img
+                    src="/google.svg"
+                    alt="Google"
                     className="w-5 h-5"
                     loading="lazy"
                     onError={(e) => {
