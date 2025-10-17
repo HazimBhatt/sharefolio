@@ -100,7 +100,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#0f172a] text-white border-t border-primary/20">
+    <footer className="bg-[#0f172a] poppins-regular text-white border-t border-primary/20">
       <div className="container px-4 py-16 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2">
