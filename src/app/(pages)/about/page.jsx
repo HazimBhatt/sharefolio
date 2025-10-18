@@ -15,13 +15,9 @@ export default function AboutPage() {
     <main className="w-full poppins-regular">
       <Hero />
       <Values />
-<<<<<<< HEAD
       {/* <Stats /> for now we don't need it, we'll update this later */}
-=======
-      {/* <Stats /> */}
->>>>>>> 7a81f7e147baf28e6cf23ea15f464c639d08d825
-      <Team />
       <Roadmap />
+      <Team />
       <ContactCTA />
       <HowItWorks />
       <CaseStudies />
