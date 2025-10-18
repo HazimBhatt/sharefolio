@@ -6,10 +6,10 @@ import { cardVariants } from "./aboutData";
 
 export default function Team() {
   const members = [
-    { name: "Hazim", role: "Gunda 1" },
-    { name: "Faisal", role: "Badmash 1" },
-    { name: "Suhail", role: "Gunda 2" },
-    { name: "Muzamil", role: "Badmash 2" },
+    { name: "Hazim", role: "ipsum" },
+    { name: "Faisal", role: "ipsum" },
+    { name: "Suhail", role: "ipsum" },
+    { name: "Muzamil", role: "ipsum" },
   ];
 
   return (
