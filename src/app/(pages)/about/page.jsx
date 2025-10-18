@@ -13,10 +13,10 @@ import ContactCTA from "./ContactCTA";
 
 export default function AboutPage() {
   return (
-    <main className="w-full min-h-screen">
+    <main className="w-full poppins-regular">
       <Hero />
       <Values />
-      <Stats />
+      {/* <Stats /> */}
       <Team />
       <Roadmap />
       <FAQ />
