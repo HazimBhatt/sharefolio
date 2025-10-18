@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { cardVariants } from "./components/aboutData";
+import { cardVariants } from "./aboutData";
 
 export default function Team() {
   const members = [
