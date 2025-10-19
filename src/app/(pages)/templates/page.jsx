@@ -56,7 +56,7 @@ const PROFESSION_HIGHLIGHTS = Object.freeze({
 
 const TEMPLATES_DATA = Object.freeze([
   {
-    id: "dev-1",
+    id: "v1/create",
     name: "Code Pro",
     description: "Clean, code-focused portfolio with project showcases and GitHub integration",
     category: "developers",

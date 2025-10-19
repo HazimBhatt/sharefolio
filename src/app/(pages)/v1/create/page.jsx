@@ -2,24 +2,23 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { 
-  User, Mail, Briefcase, GraduationCap, 
-  Code, Link, Palette, Eye, 
+import {
+  User, Mail, Briefcase, GraduationCap,
+  Code, Link, Palette, Eye,
   Plus, Trash2, Sparkles, Zap,
   MapPin, Phone, Globe, FileText,
-  Calendar
 } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
-
+import { ToastContainer, toast } from 'react-toastify';
 const PortfolioForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     // Basic Information
     subdomain: "",
     template: "default",
-    
+
     // Personal Information
     personalInfo: {
       firstName: "",
@@ -29,7 +28,7 @@ const PortfolioForm = () => {
       avatar: "",
       resumeUrl: ""
     },
-    
+
     // Contact Information
     contact: {
       email: "",
@@ -37,13 +36,13 @@ const PortfolioForm = () => {
       location: "",
       website: ""
     },
-    
+
     // Professional Information
     professionalDescription: "",
-    
+
     // Skills
     skills: [{ name: "", level: "intermediate", category: "" }],
-    
+
     // Experience
     experience: [{
       company: "",
@@ -54,7 +53,7 @@ const PortfolioForm = () => {
       currentlyWorking: false,
       location: ""
     }],
-    
+
     // Education
     education: [{
       institution: "",
@@ -65,7 +64,7 @@ const PortfolioForm = () => {
       currentlyStudying: false,
       description: ""
     }],
-    
+
     // Projects
     projects: [{
       title: "",
@@ -79,10 +78,10 @@ const PortfolioForm = () => {
       endDate: "",
       currentlyWorking: false
     }],
-    
+
     // Social Links
     socialLinks: [{ platform: "", url: "", icon: "" }],
-    
+
     // Customization
     customization: {
       theme: {
@@ -93,7 +92,7 @@ const PortfolioForm = () => {
       },
       layout: "standard"
     },
-    
+
     // SEO
     seo: {
       metaTitle: "",
@@ -222,8 +221,10 @@ const PortfolioForm = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log('Portfolio created successfully:', data);
-          window.location.href = `/`
+         toast.success('Created Successfully! Access at /v1/subdomain');
+          setTimeout(() => {
+            window.location.href = `/`
+          }, 3000)
         } else {
           // Handle error
           console.error('Failed to create portfolio:', data.error);
@@ -514,9 +515,9 @@ const PortfolioForm = () => {
               currentlyWorking: false,
               location: ""
             })}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 p-2"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 " />
             Add Experience
           </Button>
         </div>
@@ -633,9 +634,9 @@ const PortfolioForm = () => {
               currentlyStudying: false,
               description: ""
             })}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 p-2"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 " />
             Add Education
           </Button>
         </div>
@@ -767,7 +768,7 @@ const PortfolioForm = () => {
               endDate: "",
               currentlyWorking: false
             })}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 p-2"
           >
             <Plus className="w-4 h-4" />
             Add Project
@@ -932,7 +933,7 @@ const PortfolioForm = () => {
           <Button
             type="button"
             onClick={() => addArrayItem('socialLinks', { platform: "", url: "", icon: "" })}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 p-2"
           >
             <Plus className="w-4 h-4" />
             Add Link
@@ -1006,7 +1007,7 @@ const PortfolioForm = () => {
           <Palette className="w-6 h-6 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Customization</h2>
-        <p className="text-muted-foreground">Customize the look and feel of your portfolio</p>
+        <p className="text-muted-foreground">Primary color(background) and secondary colors(text) are for buttons </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1094,7 +1095,7 @@ const PortfolioForm = () => {
       {/* SEO Section */}
       <div className="space-y-4 pt-6 border-t border-border">
         <h3 className="text-lg font-semibold text-foreground">SEO Settings</h3>
-        
+
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">Meta Title</label>
           <input
@@ -1134,6 +1135,7 @@ const PortfolioForm = () => {
 
   return (
     <div className="min-h-screen pt-20 pb-12 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
+      <ToastContainer />
       <div className="absolute inset-0 overflow-hidden -z-10">
         {backgroundElements}
       </div>
@@ -1171,19 +1173,17 @@ const PortfolioForm = () => {
               return (
                 <div key={step.id} className="flex items-center">
                   <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                      currentStep >= step.id
+                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${currentStep >= step.id
                         ? 'bg-[#7332a8] border-[#7332a8] text-white'
                         : 'border-border text-muted-foreground'
-                    }`}
+                      }`}
                   >
                     <Icon className="w-5 h-5" />
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`w-16 h-0.5 ${
-                        currentStep > step.id ? 'bg-[#7332a8]' : 'bg-border'
-                      }`}
+                      className={`w-16 h-0.5 ${currentStep > step.id ? 'bg-[#7332a8]' : 'bg-border'
+                        }`}
                     />
                   )}
                 </div>
@@ -1195,7 +1195,7 @@ const PortfolioForm = () => {
         {/* Form Container */}
         <div className="relative">
           <div className="absolute -inset-1 bg-[#7332a8] rounded-3xl opacity-20" />
-          
+
           <div className="relative bg-card/90 border border-border/50 rounded-2xl p-8 shadow-lg">
             {errors.submit && (
               <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl">
@@ -1221,7 +1221,7 @@ const PortfolioForm = () => {
                   <Button
                     type="button"
                     onClick={nextStep}
-                    className="bg-[#7332a8] hover:bg-[#5a2786]"
+                    className="bg-[#7332a8] p-2 hover:bg-[#5a2786]"
                   >
                     Next Step
                   </Button>

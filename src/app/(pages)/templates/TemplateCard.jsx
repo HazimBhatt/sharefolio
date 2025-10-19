@@ -215,7 +215,7 @@ const TemplateCard = memo(({
               style={{ backgroundColor: '#7332a8' }}
               asChild
             >
-              <Link href={`/create/${template.id}`} prefetch={false}>
+              <Link href={`/${template.id}`} prefetch={false}>
                 <Rocket className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Use Template</span>
                 <span className="sm:hidden">Use</span>
