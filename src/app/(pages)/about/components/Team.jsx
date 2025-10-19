@@ -18,11 +18,11 @@ export default function Team() {
   const members = [
     {
       name: "Hazim",
-      role: "Founder & CEO",
-      img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+      role: "Developer",
+      img: "/hello.jpg",
       twitter: "https://twitter.com/",
       linkedin: "https://linkedin.com/",
-      tagline: "lorem ipsum",
+      tagline: "Not So Cool",
     },
     {
       name: "Faisal",
