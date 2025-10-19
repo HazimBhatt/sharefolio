@@ -104,31 +104,54 @@ const SignUp = () => {
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    // Mark all fields as touched
+
     setTouched({
       email: true,
       password: true,
       confirmPassword: true
     });
 
-    // Validate all fields
+
     validateField("email", formData.email);
     validateField("password", formData.password);
     validateField("confirmPassword", formData.confirmPassword);
 
-    // Check if form is valid
+
     const isFormValid = !errors.email && !errors.password && !errors.confirmPassword &&
-                       formData.email && formData.password && formData.confirmPassword &&
-                       formData.password === formData.confirmPassword && isPasswordStrong;
+      formData.email && formData.password && formData.confirmPassword &&
+      formData.password === formData.confirmPassword && isPasswordStrong;
 
     if (!isFormValid) {
       return;
     }
 
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
+
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Signup failed');
+      }
+        window.location.href = '/login';
+    } catch (error) {
+      console.error('Signup error:', error);
+      alert(error.message || 'Signup failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   }, [formData, errors, isPasswordStrong]);
 
   const togglePassword = useCallback(() => {
@@ -192,9 +215,8 @@ const SignUp = () => {
   ), []);
 
   const PasswordRequirement = ({ met, text }) => (
-    <div className={`flex items-center gap-2 text-xs transition-colors duration-200 ${
-      met ? 'text-green-600' : 'text-muted-foreground'
-    }`}>
+    <div className={`flex items-center gap-2 text-xs transition-colors duration-200 ${met ? 'text-green-600' : 'text-muted-foreground'
+      }`}>
       {met ? (
         <Check className="w-3 h-3" />
       ) : (
@@ -293,9 +315,8 @@ const SignUp = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Enter your email"
-                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
-                          touched.email && errors.email ? 'border-red-500' : 'border-border'
-                        }`}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${touched.email && errors.email ? 'border-red-500' : 'border-border'
+                          }`}
                         required
                       />
                     </div>
@@ -322,9 +343,8 @@ const SignUp = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Create a strong password"
-                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
-                          touched.password && errors.password ? 'border-red-500' : 'border-border'
-                        }`}
+                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${touched.password && errors.password ? 'border-red-500' : 'border-border'
+                          }`}
                         required
                       />
                       <button
@@ -389,9 +409,8 @@ const SignUp = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder="Confirm your password"
-                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
-                          touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-border'
-                        }`}
+                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-border'
+                          }`}
                         required
                       />
                       <button
@@ -466,7 +485,7 @@ const SignUp = () => {
                 {/* Social Sign Up */}
                 <Button
                   variant="secondary"
-                   data-focusable
+                  data-focusable
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 h-12 border border-border/50 hover:border-[#7332a8]/50 transition-all duration-200 bg-background/70"
                 >
                   <img
@@ -491,7 +510,7 @@ const SignUp = () => {
                   <p className="text-muted-foreground">
                     Already have an account?{" "}
                     <Link
-                     data-focusable
+                      data-focusable
                       href="/login"
                       className="text-[#7332a8] p-2 hover:text-[#5a2786] font-medium transition-colors duration-200"
                     >

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, Rocket, Sparkles, Star, Zap } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, Rocket, Sparkles, Star, Zap, X } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,21 +15,126 @@ const Login = () => {
     password: ""
   });
 
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    submit: ""
+  });
+
+  const [touched, setTouched] = useState({
+    email: false,
+    password: false
+  });
+
+  const { login } = useAuth();
+
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
+    
+    // Clear submit error when any field changes
+    if (errors.submit) {
+      setErrors(prev => ({
+        ...prev,
+        submit: ""
+      }));
+    }
+  }, [errors]);
+
+  const handleBlur = useCallback((e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+    validateField(name, value);
+  }, []);
+
+  const validateField = useCallback((name, value) => {
+    let error = "";
+
+    switch (name) {
+      case "email":
+        if (!value) {
+          error = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address";
+        }
+        break;
+
+      case "password":
+        if (!value) {
+          error = "Password is required";
+        } else if (value.length < 6) {
+          error = "Password must be at least 6 characters";
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    
+    // Mark all fields as touched
+    setTouched({
+      email: true,
+      password: true
+    });
+
+    // Validate all fields
+    validateField("email", formData.email);
+    validateField("password", formData.password);
+
+    // Check if form is valid
+    const isFormValid = !errors.email && !errors.password && 
+                       formData.email && formData.password;
+
+    if (!isFormValid) {
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-  }, []);
+
+    try {
+      const result = await login(formData.email, formData.password);
+      
+      if (result.success) {
+        window.location.href = '/';
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          submit: result.error
+        }));
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrors(prev => ({
+        ...prev,
+        submit: 'An unexpected error occurred'
+      }));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, errors, login]);
 
   const togglePassword = useCallback(() => {
     setShowPassword(prev => !prev);
@@ -138,6 +244,14 @@ const Login = () => {
                   </p>
                 </div>
 
+                {/* Display submit error */}
+                {errors.submit && (
+                  <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl flex items-center gap-2">
+                    <X className="w-4 h-4" />
+                    <span className="text-sm">{errors.submit}</span>
+                  </div>
+                )}
+
                 {/* Login Form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
                   {/* Email Field */}
@@ -148,17 +262,26 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <input
-                       data-focusable
+                        data-focusable
                         id="email"
                         name="email"
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder="Enter your email"
-                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
+                          touched.email && errors.email ? 'border-red-500' : 'border-border'
+                        }`}
                         required
                       />
                     </div>
+                    {touched.email && errors.email && (
+                      <p className="text-red-500 text-xs flex items-center gap-1">
+                        <X className="w-3 h-3" />
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
 
                   {/* Password Field */}
@@ -170,18 +293,20 @@ const Login = () => {
                     <div className="relative">
                       <input
                         id="password"
-                         data-focusable
+                        data-focusable
                         name="password"
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
                         onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder="Enter your password"
-                        className="w-full px-4 pr-12 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200"
+                        className={`w-full px-4 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground transition-colors duration-200 ${
+                          touched.password && errors.password ? 'border-red-500' : 'border-border'
+                        }`}
                         required
                       />
                       <button
                         type="button"
-                        
                         onClick={togglePassword}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors duration-200"
                         aria-label={showPassword ? "Hide password" : "Show password"}
@@ -189,6 +314,12 @@ const Login = () => {
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
+                    {touched.password && errors.password && (
+                      <p className="text-red-500 text-xs flex items-center gap-1">
+                        <X className="w-3 h-3" />
+                        {errors.password}
+                      </p>
+                    )}
                   </div>
 
                   {/* Remember Me & Forgot Password */}
@@ -202,7 +333,7 @@ const Login = () => {
                     </label>
                     <Link
                       href="/forgot-password"
-                       data-focusable
+                      data-focusable
                       className="text-sm p-2 text-[#7332a8] hover:text-[#5a2786] transition-colors duration-200"
                     >
                       Forgot password?
@@ -214,7 +345,7 @@ const Login = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                     data-focusable
+                    data-focusable
                     disabled={isLoading}
                     className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-[#7332a8] text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5a2786]"
                   >
@@ -244,7 +375,7 @@ const Login = () => {
 
                 <Button
                   variant="secondary"
-                   data-focusable
+                  data-focusable
                   className="w-full flex items-center justify-center gap-3 px-4 py-3 h-12 border border-border/50 hover:border-[#7332a8]/50 transition-all duration-200 bg-background/70"
                 >
                   <img 
@@ -264,13 +395,13 @@ const Login = () => {
                   Continue with Google
                 </Button>
 
-                {/* Sign Up continue*/}
+                {/* Sign Up Link */}
                 <div className="text-center mt-6">
                   <p className="text-muted-foreground">
                     Don&apos;t have an account?{" "}
                     <Link
                       href="/signup"
-                       data-focusable
+                      data-focusable
                       className="text-[#7332a8] p-2 hover:text-[#5a2786] font-medium transition-colors duration-200"
                     >
                       Create one now

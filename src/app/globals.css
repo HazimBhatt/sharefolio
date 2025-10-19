@@ -45,7 +45,9 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
-
+::-webkit-scrollbar{
+  width: 3px;
+}
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

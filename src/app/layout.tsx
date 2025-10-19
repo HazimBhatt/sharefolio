@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import LayoutWrapper from "@/components/LayoutWrapper"
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ModeToggle";
 import FocusCursor from '@/components/FocusCursor';
-import Footer from "@/components/Footer"
+import { AuthProvider } from "@/contexts/AuthContext";
 const poppins = Poppins({
   variable: "--font-poppins",
   weight: ["300", "400", "500", "600", "700"], 
@@ -24,6 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+       <AuthProvider>
       <body className={`${poppins.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -33,12 +34,12 @@ export default function RootLayout({
         >
           <ModeToggle />
           <FocusCursor />
-          <Navbar />
-
+          <LayoutWrapper>
           {children}
-      <Footer/>
+          </LayoutWrapper>
         </ThemeProvider>
       </body>
+      </AuthProvider>
     </html>
   );
 }
