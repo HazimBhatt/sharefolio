@@ -111,11 +111,11 @@ const portfolioSchema = new mongoose.Schema({
   experience: [{
     company: {
       type: String,
-      required: true
+      // required: true
     },
     position: {
       type: String,
-      required: true
+      // required: true
     },
     description: String,
     startDate: Date,
