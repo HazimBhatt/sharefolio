@@ -2,9 +2,10 @@
 
 import Hero from "./components/Hero";
 import Values from "./components/Values";
+import OurMission from "./components/OurMission";
 // import Stats from "./components/Stats";
 import Team from "./components/Team";
-import Roadmap from "./components/Journey";
+import Journey from "./components/Journey";
 import HowItWorks from "./components/HowItWorks";
 import CaseStudies from "./components/CaseStudies";
 import Integrations from "./components/Integrations";
@@ -15,13 +16,14 @@ export default function AboutPage() {
     <main className="w-full poppins-regular">
       <Hero />
       <Values />
-      {/* <Stats /> */}
+      <OurMission />
+      {/* <Stats /> for now we don't need it, we'll update this later */}
       <Team />
-      <Roadmap />
-      <ContactCTA />
+      <Journey />
       <HowItWorks />
       <CaseStudies />
       <Integrations />
+      <ContactCTA />
     </main>
   );
 }
