@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import { useState, useCallback, useMemo } from "react";
 import { ToastContainer, toast } from 'react-toastify';
+
 const PortfolioForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [showExperience, setShowExperience] = useState(true); // New state to toggle experience section
 
   const [formData, setFormData] = useState({
     // Basic Information
@@ -43,7 +45,7 @@ const PortfolioForm = () => {
     // Skills
     skills: [{ name: "", level: "intermediate", category: "" }],
 
-    // Experience
+    // Experience - Can be empty for beginners
     experience: [{
       company: "",
       position: "",
@@ -172,6 +174,32 @@ const PortfolioForm = () => {
     });
   }, []);
 
+  // New function to toggle experience section
+  const toggleExperienceSection = useCallback(() => {
+    setShowExperience(prev => !prev);
+    // If hiding experience, clear all experience data
+    if (showExperience) {
+      setFormData(prev => ({
+        ...prev,
+        experience: []
+      }));
+    } else {
+      // If showing experience, add one empty experience
+      setFormData(prev => ({
+        ...prev,
+        experience: [{
+          company: "",
+          position: "",
+          description: "",
+          startDate: "",
+          endDate: "",
+          currentlyWorking: false,
+          location: ""
+        }]
+      }));
+    }
+  }, [showExperience]);
+
   const validateStep = useCallback((step) => {
     const newErrors = {};
 
@@ -210,23 +238,28 @@ const PortfolioForm = () => {
     if (validateStep(6)) {
       setIsLoading(true);
       try {
+        // Prepare data for submission - remove experience if section is hidden
+        const submissionData = {
+          ...formData,
+          experience: showExperience ? formData.experience : []
+        };
+
         const response = await fetch('/api/portfolios', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(submissionData),
         });
 
         const data = await response.json();
 
         if (response.ok) {
-         toast.success('Created Successfully! Access at /v1/subdomain');
+          toast.success('Created Successfully! Access at /v1/subdomain');
           setTimeout(() => {
             window.location.href = `/`
           }, 3000)
         } else {
-          // Handle error
           console.error('Failed to create portfolio:', data.error);
           setErrors({ submit: data.error });
         }
@@ -237,7 +270,7 @@ const PortfolioForm = () => {
         setIsLoading(false);
       }
     }
-  }, [formData, validateStep]);
+  }, [formData, validateStep, showExperience]);
 
   const steps = [
     { id: 1, name: "Basic Info", icon: User },
@@ -497,124 +530,145 @@ const PortfolioForm = () => {
         <p className="text-muted-foreground">Add your work experience and educational background</p>
       </div>
 
-      {/* Experience Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      {/* Experience Section Toggle */}
+      <div className="flex items-center justify-between p-4 border border-border rounded-xl bg-background/50">
+        <div>
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <Briefcase className="w-5 h-5" />
             Work Experience
           </h3>
-          <Button
-            type="button"
-            onClick={() => addArrayItem('experience', {
-              company: "",
-              position: "",
-              description: "",
-              startDate: "",
-              endDate: "",
-              currentlyWorking: false,
-              location: ""
-            })}
-            className="flex items-center gap-2 p-2"
-          >
-            <Plus className="w-4 h-4 " />
-            Add Experience
-          </Button>
+          <p className="text-sm text-muted-foreground">
+            {showExperience ? "Experience section is visible" : "Experience section is hidden - perfect for beginners!"}
+          </p>
         </div>
-
-        {formData.experience.map((exp, index) => (
-          <div key={index} className="p-6 border border-border rounded-xl space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Company *</label>
-                <input
-                  type="text"
-                  value={exp.company}
-                  onChange={(e) => handleArrayChange('experience', index, 'company', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-                  placeholder="Company name"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Position *</label>
-                <input
-                  type="text"
-                  value={exp.position}
-                  onChange={(e) => handleArrayChange('experience', index, 'position', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-                  placeholder="Job title"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Description</label>
-              <textarea
-                rows={3}
-                value={exp.description}
-                onChange={(e) => handleArrayChange('experience', index, 'description', e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-                placeholder="Describe your role and responsibilities"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Start Date</label>
-                <input
-                  type="date"
-                  value={exp.startDate}
-                  onChange={(e) => handleArrayChange('experience', index, 'startDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">End Date</label>
-                <input
-                  type="date"
-                  value={exp.endDate}
-                  onChange={(e) => handleArrayChange('experience', index, 'endDate', e.target.value)}
-                  disabled={exp.currentlyWorking}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground disabled:opacity-50"
-                />
-              </div>
-              <div className="flex items-end space-y-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={exp.currentlyWorking}
-                    onChange={(e) => handleArrayChange('experience', index, 'currentlyWorking', e.target.checked)}
-                    className="rounded border-border"
-                  />
-                  <span className="text-sm font-medium text-foreground">Currently working here</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <div className="space-y-2 flex-1">
-                <label className="text-sm font-medium text-foreground">Location</label>
-                <input
-                  type="text"
-                  value={exp.location}
-                  onChange={(e) => handleArrayChange('experience', index, 'location', e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-                  placeholder="City, Country"
-                />
-              </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={() => removeArrayItem('experience', index)}
-                className="ml-4"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        ))}
+        <Button
+          type="button"
+          variant={showExperience ? "destructive" : "outline"}
+          onClick={toggleExperienceSection}
+          className="flex items-center gap-2"
+        >
+          <Trash2 className="w-4 h-4" />
+          {showExperience ? "Remove Experience" : "Add Experience"}
+        </Button>
       </div>
+
+      {/* Experience Section - Conditionally Rendered */}
+      {showExperience && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-md font-medium text-foreground">Your Experience</h4>
+            <Button
+              type="button"
+              onClick={() => addArrayItem('experience', {
+                company: "",
+                position: "",
+                description: "",
+                startDate: "",
+                endDate: "",
+                currentlyWorking: false,
+                location: ""
+              })}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add Experience
+            </Button>
+          </div>
+
+          {formData.experience.map((exp, index) => (
+            <div key={index} className="p-6 border border-border rounded-xl space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Company</label>
+                  <input
+                    type="text"
+                    value={exp.company}
+                    onChange={(e) => handleArrayChange('experience', index, 'company', e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+                    placeholder="Company name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Position</label>
+                  <input
+                    type="text"
+                    value={exp.position}
+                    onChange={(e) => handleArrayChange('experience', index, 'position', e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+                    placeholder="Job title"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Description</label>
+                <textarea
+                  rows={3}
+                  value={exp.description}
+                  onChange={(e) => handleArrayChange('experience', index, 'description', e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+                  placeholder="Describe your role and responsibilities"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Start Date</label>
+                  <input
+                    type="date"
+                    value={exp.startDate}
+                    onChange={(e) => handleArrayChange('experience', index, 'startDate', e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">End Date</label>
+                  <input
+                    type="date"
+                    value={exp.endDate}
+                    onChange={(e) => handleArrayChange('experience', index, 'endDate', e.target.value)}
+                    disabled={exp.currentlyWorking}
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground disabled:opacity-50"
+                  />
+                </div>
+                <div className="flex items-end space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={exp.currentlyWorking}
+                      onChange={(e) => handleArrayChange('experience', index, 'currentlyWorking', e.target.checked)}
+                      className="rounded border-border"
+                    />
+                    <span className="text-sm font-medium text-foreground">Currently working here</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <div className="space-y-2 flex-1">
+                  <label className="text-sm font-medium text-foreground">Location</label>
+                  <input
+                    type="text"
+                    value={exp.location}
+                    onChange={(e) => handleArrayChange('experience', index, 'location', e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+                    placeholder="City, Country"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => removeArrayItem('experience', index)}
+                  className="ml-4"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Education Section */}
       <div className="space-y-4">
@@ -634,9 +688,9 @@ const PortfolioForm = () => {
               currentlyStudying: false,
               description: ""
             })}
-            className="flex items-center gap-2 p-2"
+            className="flex items-center gap-2"
           >
-            <Plus className="w-4 h-4 " />
+            <Plus className="w-4 h-4" />
             Add Education
           </Button>
         </div>
@@ -768,7 +822,7 @@ const PortfolioForm = () => {
               endDate: "",
               currentlyWorking: false
             })}
-            className="flex items-center gap-2 p-2"
+            className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Project
@@ -933,7 +987,7 @@ const PortfolioForm = () => {
           <Button
             type="button"
             onClick={() => addArrayItem('socialLinks', { platform: "", url: "", icon: "" })}
-            className="flex items-center gap-2 p-2"
+            className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Link
@@ -1007,116 +1061,14 @@ const PortfolioForm = () => {
           <Palette className="w-6 h-6 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Customization</h2>
-        <p className="text-muted-foreground">Primary color(background) and secondary colors(text) are for buttons </p>
+        {/* <p className="text-muted-foreground">Primary color(background) and secondary colors(text) are for buttons </p> */}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Primary Color</label>
-          <div className="flex items-center gap-3">
-            <input
-              type="color"
-              value={formData.customization.theme.primaryColor}
-              onChange={(e) => handleChange('customization.theme.primaryColor', e.target.value)}
-              className="w-16 h-16 rounded-lg border border-border cursor-pointer"
-            />
-            <input
-              type="text"
-              value={formData.customization.theme.primaryColor}
-              onChange={(e) => handleChange('customization.theme.primaryColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-              placeholder="#7332a8"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Secondary Color</label>
-          <div className="flex items-center gap-3">
-            <input
-              type="color"
-              value={formData.customization.theme.secondaryColor}
-              onChange={(e) => handleChange('customization.theme.secondaryColor', e.target.value)}
-              className="w-16 h-16 rounded-lg border border-border cursor-pointer"
-            />
-            <input
-              type="text"
-              value={formData.customization.theme.secondaryColor}
-              onChange={(e) => handleChange('customization.theme.secondaryColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-              placeholder="#b266ff"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Font Family</label>
-          <select
-            value={formData.customization.theme.fontFamily}
-            onChange={(e) => handleChange('customization.theme.fontFamily', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-          >
-            <option value="inter">Inter</option>
-            <option value="poppins">Poppins</option>
-            <option value="roboto">Roboto</option>
-            <option value="montserrat">Montserrat</option>
-            <option value="open-sans">Open Sans</option>
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Layout</label>
-          <select
-            value={formData.customization.layout}
-            onChange={(e) => handleChange('customization.layout', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-          >
-            <option value="standard">Standard</option>
-            <option value="creative">Creative</option>
-            <option value="minimal">Minimal</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.customization.theme.darkMode}
-            onChange={(e) => handleChange('customization.theme.darkMode', e.target.checked)}
-            className="rounded border-border"
-          />
-          <span className="text-sm font-medium text-foreground">Enable Dark Mode</span>
-        </label>
-      </div>
-
-      {/* SEO Section */}
-      <div className="space-y-4 pt-6 border-t border-border">
-        <h3 className="text-lg font-semibold text-foreground">SEO Settings</h3>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Meta Title</label>
-          <input
-            type="text"
-            value={formData.seo.metaTitle}
-            onChange={(e) => handleChange('seo.metaTitle', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-            placeholder="Meta title for SEO"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">Meta Description</label>
-          <textarea
-            rows={3}
-            value={formData.seo.metaDescription}
-            onChange={(e) => handleChange('seo.metaDescription', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-            placeholder="Meta description for SEO"
-          />
-        </div>
+      {/* Customization options can be added here */}
+      <div className="text-center p-8 border border-dashed border-border rounded-xl">
+        <Palette className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-foreground mb-2">Customization Options</h3>
+        <p className="text-muted-foreground">Theme customization options will be available in future updates.</p>
       </div>
     </div>
   );
@@ -1221,7 +1173,7 @@ const PortfolioForm = () => {
                   <Button
                     type="button"
                     onClick={nextStep}
-                    className="bg-[#7332a8] p-2 hover:bg-[#5a2786]"
+                    className="bg-[#7332a8] hover:bg-[#5a2786]"
                   >
                     Next Step
                   </Button>
