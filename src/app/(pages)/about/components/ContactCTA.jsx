@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { RocketIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function ContactCTA() {
   return (
@@ -12,7 +13,9 @@ export default function ContactCTA() {
           <h3 className="text-2xl font-semibold"><span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">Ready to build your portfolio?</span></h3>
           <p className="text-muted-foreground mt-2">Start for free and upgrade when you're ready.</p>
         </div>
-        <div className="mt-6 md:mt-0"><Link data-focusable className="border rounded-2xl bg-[#7332a8] dark:white p-4" href="/signup">Create your portfolio</Link></div>
+        <Button variant="primary" className="p-4 text-white">
+          <RocketIcon className="w-4 h-4" /><Link href="/signup">Make Yours Lets Go </Link><RocketIcon />
+        </Button>
       </div>
     </motion.section>
   );

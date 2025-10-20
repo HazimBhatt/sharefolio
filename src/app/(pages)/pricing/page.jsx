@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   Check,
   Star,
   Zap,
@@ -260,7 +260,7 @@ const PricingPage = () => {
                     >
                       <div className={cn(
                         "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
-                        feature.included 
+                        feature.included
                           ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                           : "bg-muted text-muted-foreground"
                       )}>
@@ -285,6 +285,71 @@ const PricingPage = () => {
               </motion.div>
             );
           })}
+        </motion.div>
+
+        {/* Some QandA related to Premium Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-16 sm:mt-20"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
+              <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">
+                Frequently Asked Questions
+              </span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Got questions? We've got answers.
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto space-y-6">
+            {[
+              {
+                question: "What are Portfolio Creation Tokens?",
+                answer: "Tokens are credits used to create and publish portfolios. Each plan includes a set number of tokens that never expire."
+              },
+              {
+                question: "Can I upgrade my plan later?",
+                answer: "Yes! You can purchase additional tokens anytime from your dashboard. Upgrades are instant and one-time payments."
+              },
+              {
+                question: "Do I own my portfolios?",
+                answer: "Absolutely. Once created, your portfolios are yours forever. You can export, modify, or host them anywhere."
+              },
+              {
+                question: "What payment methods do you accept?",
+                answer: "We accept all major credit cards, PayPal, and other secure payment methods through our checkout."
+              },
+              {
+                question: "Is there a free trial?",
+                answer: "Yes! Start with our free Starter plan to create one portfolio and explore all features before upgrading."
+              },
+              {
+                question: "What if I need more tokens?",
+                answer: "You can buy additional tokens individually or upgrade to a higher plan. Contact support for custom enterprise needs."
+              }
+            ].map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                className="bg-card/50 border border-border rounded-2xl p-6 hover:bg-card/70 transition-colors"
+              >
+                <h3 className="text-lg font-semibold text-foreground mb-3">
+                  {faq.question}
+                </h3>
+                <p className="text-muted-foreground">
+                  {faq.answer}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </div>
