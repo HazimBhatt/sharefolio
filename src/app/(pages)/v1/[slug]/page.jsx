@@ -249,15 +249,6 @@ const PortfolioLoading = () => {
             className="h-full w-1/4 bg-gradient-to-r from-transparent via-primary to-transparent"
           />
         </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-sm text-muted-foreground"
-        >
-          Crafting your amazing portfolio...
-        </motion.p>
       </motion.div>
     </div>
   );
@@ -1254,10 +1245,10 @@ const SkillsSection = React.memo(({ skills }) => {
                             </Badge>
                           </div>
                           
-                          <div className="relative">
+                          <div className="relative ">
                             <Progress 
-                              value={levelInfo.value} 
-                              className="h-3 bg-muted"
+                              // value={levelInfo.value} 
+                              className="h-3 bg-muted rounded-full w-full"
                             />
                             <motion.div
                               className={`absolute top-0 left-0 h-3 rounded-full ${levelInfo.color}`}

@@ -61,7 +61,7 @@ const TEMPLATES_DATA = Object.freeze([
     name: "Code Pro",
     description: "Clean, code-focused portfolio with project showcases and GitHub integration",
     category: "developers",
-    image: "/templates/dev-1.png",
+    image: "/templates/dev-1.webp",
     featured: true,
     popular: true,
     tags: ["React", "GitHub", "Projects", "Code"],
