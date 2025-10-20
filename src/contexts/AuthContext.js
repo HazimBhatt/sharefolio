@@ -87,7 +87,6 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Check if we should verify token (within 30-minute window)
   const shouldVerifyToken = useCallback(() => {
     const verifiedAt = localStorage.getItem('tokenVerifiedAt');
     if (!verifiedAt) return true;
@@ -126,7 +125,7 @@ export function AuthProvider({ children }) {
 
     const interval = setInterval(() => {
       verifyToken();
-    }, 25 * 60 * 1000); // 25 minutes
+    }, 25 * 60 * 1000); 
 
     return () => clearInterval(interval);
   }, [isAuthenticated, verifyToken]);

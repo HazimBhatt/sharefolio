@@ -68,7 +68,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Index for better query performance
-userSchema.index({ email: 1 });
+// userSchema.index({ email: 1 });
 // userSchema.index({ 'subscription.isActive': 1 });
 
 export default mongoose.models.User || mongoose.model('User', userSchema);

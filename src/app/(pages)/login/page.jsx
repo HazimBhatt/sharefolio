@@ -322,17 +322,17 @@ const Login = () => {
                     )}
                   </div>
 
-                  {/* Remember Me & Forgot Password */}
+                  {/*  Forgot Password */}
                   <div className="flex items-center justify-between">
-                    <label className="flex items-center space-x-2">
+                    {/* <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         className="w-4 h-4 text-[#7332a8] border-border rounded focus:ring-[#7332a8] bg-background/70"
                       />
                       <span className="text-sm text-muted-foreground">Remember me</span>
-                    </label>
+                    </label> */}
                     <Link
-                      href="/forgot-password"
+                      href="login/forgot-password"
                       data-focusable
                       className="text-sm p-2 text-[#7332a8] hover:text-[#5a2786] transition-colors duration-200"
                     >
