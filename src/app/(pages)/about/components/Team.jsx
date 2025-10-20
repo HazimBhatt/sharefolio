@@ -10,6 +10,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { sectionStagger, cardVariants } from "./aboutData";
+import { LinkedinIcon, Twitter, TwitterIcon, X } from "lucide-react";
 
 export default function Team() {
   const [isAligned, setIsAligned] = useState(false);
@@ -19,35 +20,35 @@ export default function Team() {
     {
       name: "Hazim",
       role: "Developer",
-      img: "/hello.jpg",
+      img: "/about/hello.jpg",
       twitter: "https://twitter.com/",
       linkedin: "https://linkedin.com/",
       tagline: "Not So Cool",
     },
     {
       name: "Faisal",
-      role: "Engineering Lead",
+      role: "Developer",
       img: "/about/fabulous.jpg",
       twitter: "https://twitter.com/fab14c",
       linkedin: "https://linkedin.com/in/fab-ulous",
       tagline:
-        "Simple But Different, It's okay to rest, you don't have to be perfect",
+        "Simple But Different — Fabulous",
     },
     {
       name: "Suhail",
       role: "Product Lead",
-      img: "https://images.unsplash.com/photo-1545996124-2b2c8f1b2d5e",
+      img: "/about/hello.jpg",
       twitter: "https://twitter.com/",
       linkedin: "https://linkedin.com/",
-      tagline: "lorem ipsum",
+      tagline: "Don't mind me, I'm just here for moral support and snacks",
     },
     {
-      name: "Muzamil",
+      name: "Muzamil Rashid",
       role: "Design Lead",
-      img: "",
-      twitter: "https://twitter.com/",
+      img: "/about/muzamil.jpeg",
+      twitter: "https://www.linkedin.com/in/muzamil-rashid-3931a8336?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
       linkedin: "https://linkedin.com/",
-      tagline: "lorem ipsum",
+      tagline: "We don't just debug code — we debug life together.",
     },
   ];
 
@@ -73,19 +74,22 @@ export default function Team() {
       className="w-[90%] mx-auto py-12"
     >
       <div className="max-w-6xl mx-auto">
-        <h3 className="text-2xl font-semibold mb-6">
-          <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">
-            Members
-          </span>
-        </h3>
+        <div className="text-center mb-6">
+          <h3 className="text-3xl sm:text-4xl font-extrabold mx-auto">
+            <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">
+              Members
+            </span>
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto mt-2">Meet the team behind the magic.</p>
+        </div>
 
         {/* Mobile list */}
-        <div className="md:hidden max-w-lg mx-auto flex flex-col items-center">
+        <div className="md:hidden max-w-lg mx-auto flex flex-col items-center gap-4">
           {members.map((m, i) => (
             <motion.div
               key={m.name}
               variants={cardVariants}
-              className={`${i !== 0 ? "-mt-6" : ""} w-full`}
+              className="w-full"
             >
               <Card className="overflow-hidden">
                 <CardHeader className="items-center gap-4">
@@ -100,25 +104,38 @@ export default function Team() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-end gap-3">
-                    <a
+                  <p className="text-sm text-muted-foreground text-center">{m.tagline}</p>
+                  <div className="flex justify-center gap-4 mt-4">
+                    <Button
                       data-focusable
-                      href={m.twitter}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-muted-foreground"
+                      variant="outline"
+                      size="sm"
+                      asChild
                     >
-                      Twitter
-                    </a>
-                    <a
+                      <a
+                        href={m.twitter}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Twitter className="w-4 h-4 mr-2" />
+                        Twitter
+                      </a>
+                    </Button>
+                    <Button
                       data-focusable
-                      href={m.linkedin}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-muted-foreground"
+                      variant="outline"
+                      size="sm"
+                      asChild
                     >
-                      LinkedIn
-                    </a>
+                      <a
+                        href={m.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <LinkedinIcon className="w-4 h-4 mr-2" />
+                        LinkedIn
+                      </a>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -157,15 +174,14 @@ export default function Team() {
                 }}
               >
                 <Card
-                  className={`p-4 rounded-2xl border border-border ${
-                    i === 0
-                      ? "shadow-2xl"
-                      : i === 1
+                  className={`p-4 rounded-2xl border border-border ${i === 0
+                    ? "shadow-2xl"
+                    : i === 1
                       ? "shadow-xl"
                       : i === 2
-                      ? "shadow-md"
-                      : "shadow-sm"
-                  }`}
+                        ? "shadow-md"
+                        : "shadow-sm"
+                    }`}
                 >
                   <CardHeader className="items-start gap-4">
                     <img
@@ -177,14 +193,22 @@ export default function Team() {
                       <CardTitle>{m.name}</CardTitle>
                       <CardDescription>{m.role}</CardDescription>
                     </div>
+
+                  </CardHeader>
+
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{m.tagline}</p>
+                  </CardContent>
+                  <CardFooter>
                     <div className="ml-auto flex gap-2">
                       <a
                         data-focusable
                         href={m.twitter}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-sm text-muted-foreground"
+                        className="text-sm text-muted-foreground border p-2 border-blue/90"
                       >
+                        <Twitter size={36} className="dark:text-white" />
                         Twitter
                       </a>
                       <a
@@ -192,25 +216,14 @@ export default function Team() {
                         href={m.linkedin}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-sm text-muted-foreground"
+                        className="text-sm text-muted-foreground border-2 p-2"
                       >
+                        <LinkedinIcon size={36} className="dark:text-white" />
                         LinkedIn
                       </a>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{m.tagline}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <div className="ml-auto flex gap-2">
-                      <Button variant="outline" size="sm">
-                        Message
-                      </Button>
-                      <Button variant="primary" size="sm">
-                        Follow
-                      </Button>
-                    </div>
                   </CardFooter>
+
                 </Card>
               </motion.div>
             );
