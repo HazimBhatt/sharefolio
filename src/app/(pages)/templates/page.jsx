@@ -34,14 +34,14 @@ const TemplateCard = lazy(() => import('./TemplateCard'));
 
 // Memoized static data - frozen to prevent mutations
 const CATEGORIES = Object.freeze([
-  { id: "all", name: "All Templates", icon: Layout, count: 15 },
-  { id: "developers", name: "Web Developers", icon: Code, count: 3 },
-  { id: "designers", name: "Designers", icon: PenTool, count: 2 },
-  { id: "photographers", name: "Photographers", icon: Camera, count: 2 },
-  { id: "writers", name: "Writers & Bloggers", icon: BookOpen, count: 2 },
-  { id: "freelancers", name: "Freelancers", icon: Briefcase, count: 2 },
-  { id: "students", name: "Students", icon: GraduationCap, count: 3 },
-  { id: "marketers", name: "Marketers", icon: Users, count: 2 },
+  { id: "all", name: "All Templates", icon: Layout, count: 1 },
+  { id: "developers", name: "Web Developers", icon: Code, count: 1 },
+  { id: "designers", name: "Designers", icon: PenTool, count: 0 },
+  { id: "photographers", name: "Photographers", icon: Camera, count: 0},
+  { id: "writers", name: "Writers & Bloggers", icon: BookOpen, count: 0},
+  { id: "freelancers", name: "Freelancers", icon: Briefcase, count: 0 },
+  { id: "students", name: "Students", icon: GraduationCap, count: 0 },
+  { id: "marketers", name: "Marketers", icon: Users, count: 0 },
 ]);
 
 const PROFESSION_HIGHLIGHTS = Object.freeze({
@@ -61,7 +61,7 @@ const TEMPLATES_DATA = Object.freeze([
     name: "Code Pro",
     description: "Clean, code-focused portfolio with project showcases and GitHub integration",
     category: "developers",
-    image: "/templates/dev-1.jpg",
+    image: "/templates/dev-1.png",
     featured: true,
     popular: true,
     tags: ["React", "GitHub", "Projects", "Code"],
@@ -69,45 +69,6 @@ const TEMPLATES_DATA = Object.freeze([
     layout: "modern",
     colorScheme: "dark"
   },
-  {
-    id: "dev-2",
-    name: "Full Stack",
-    description: "Comprehensive portfolio showcasing full-stack projects and technical skills",
-    category: "developers",
-    image: "/templates/dev-1.jpg",
-    featured: false,
-    popular: true,
-    tags: ["Full Stack", "API", "Database", "Backend"],
-    rating: 4.8,
-    layout: "minimal",
-    colorScheme: "light"
-  },
-  {
-    id: "design-1",
-    name: "Creative Pro",
-    description: "Visually stunning portfolio for designers and creatives",
-    category: "designers",
-    image: "/templates/dev-1.jpg",
-    featured: true,
-    popular: false,
-    tags: ["Visual", "Creative", "Gallery", "Modern"],
-    rating: 4.7,
-    layout: "grid",
-    colorScheme: "light"
-  },
-  {
-    id: "photo-1",
-    name: "Gallery Pro",
-    description: "Perfect for photographers with focus on image galleries",
-    category: "photographers",
-    image: "/templates/dev-1.jpg",
-    featured: false,
-    popular: true,
-    tags: ["Gallery", "Images", "Portfolio", "Visual"],
-    rating: 4.8,
-    layout: "masonry",
-    colorScheme: "dark"
-  }
 ]);
 
 // Optimized static components
