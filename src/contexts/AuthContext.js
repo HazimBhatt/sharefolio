@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
         
         return data.user;
       } else {
-        throw new Error('Token verification failed');
+        // throw new Error('Token verification failed');
       }
     } catch (error) {
       console.error('Token verification error:', error);

@@ -405,7 +405,7 @@ const PortfolioForm = () => {
             value={formData.contact.phone}
             onChange={(e) => handleChange('contact.phone', e.target.value)}
             className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-            placeholder="+1 (555) 000-0000"
+            placeholder="+91 1232242324"
           />
         </div>
       </div>
@@ -426,7 +426,7 @@ const PortfolioForm = () => {
     </div>
   );
 
-  // Step 2: Professional Information
+
   const renderStep2 = () => (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -1086,7 +1086,7 @@ const PortfolioForm = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 pb-12 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
+    <div className="min-h-screen poppins-regular pt-20 pb-12 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
       <ToastContainer />
       <div className="absolute inset-0 overflow-hidden -z-10">
         {backgroundElements}
@@ -1173,7 +1173,7 @@ const PortfolioForm = () => {
                   <Button
                     type="button"
                     onClick={nextStep}
-                    className="bg-[#7332a8] hover:bg-[#5a2786]"
+                    className="bg-[#7332a8] p-2 hover:bg-[#5a2786]"
                   >
                     Next Step
                   </Button>

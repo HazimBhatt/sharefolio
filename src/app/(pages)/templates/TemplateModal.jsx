@@ -55,7 +55,8 @@ const TemplateModal = memo(({ selectedTemplate, closeModal }) => {
                 <Image 
                   src={selectedTemplate.image} 
                   alt={selectedTemplate.name} 
-                  fill 
+                  width={1751}
+                  height={915}
                   className="object-cover transform-gpu"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
                   placeholder="blur"
