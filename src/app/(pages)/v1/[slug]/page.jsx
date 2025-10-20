@@ -1,38 +1,38 @@
 'use client';
 
-import React,{ useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { motion, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
 } from "@/components/ui/card";
-import { 
-  Avatar, 
-  AvatarFallback, 
-  AvatarImage 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage
 } from "@/components/ui/avatar";
-import { 
-  Progress 
+import {
+  Progress
 } from "@/components/ui/progress";
-import { 
-  Button 
+import {
+  Button
 } from "@/components/ui/button";
-import { 
-  Badge 
+import {
+  Badge
 } from "@/components/ui/badge";
-import { 
-  Skeleton 
+import {
+  Skeleton
 } from "@/components/ui/skeleton";
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Globe, 
-  Github, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Github,
   ExternalLink,
   Calendar,
   Briefcase,
@@ -58,7 +58,7 @@ const LazyTypewriter = lazy(() => import('@/components/v1/LazyTypewriter'));
 const LazyParticles = lazy(() => import('@/components/v1/LazyParticles'));
 
 // Optimized Typewriter with performance improvements
-const Typewriter = ({ text, speed = 50, className = "" }) => {
+const Typewriter = React.memo(({ text, speed = 50, className = "" }) => {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const animationRef = useRef(null);
@@ -79,11 +79,11 @@ const Typewriter = ({ text, speed = 50, className = "" }) => {
   }, [currentIndex, text, speed]);
 
   return <span className={className}>{displayText}</span>;
-};
+});
 
 // Optimized Floating Particles
-const FloatingParticles = () => {
-  const particles = useMemo(() => 
+const FloatingParticles = React.memo(() => {
+  const particles = useMemo(() =>
     Array.from({ length: 12 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -92,7 +92,7 @@ const FloatingParticles = () => {
       duration: 3 + Math.random() * 2,
       size: Math.random() * 3 + 1,
     }))
-  , []);
+    , []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -121,7 +121,7 @@ const FloatingParticles = () => {
       ))}
     </div>
   );
-};
+});
 
 // Performance optimized main component
 export default function PortfolioPage() {
@@ -134,32 +134,32 @@ export default function PortfolioPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
-      
+
       const response = await fetch(`/api/portfolios/${params.slug}`, {
         signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           throw new Error('Portfolio not found');
         }
         throw new Error(`Failed to fetch portfolio: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (!data.portfolio) {
         throw new Error('Invalid portfolio data');
       }
-      
+
       setPortfolio(data.portfolio);
     } catch (err) {
       setError(err.name === 'AbortError' ? 'Request timeout' : err.message);
@@ -199,7 +199,7 @@ export default function PortfolioPage() {
 }
 
 // Enhanced Loading Component with skeleton screens
-const PortfolioLoading = () => {
+const PortfolioLoading = React.memo(() => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <motion.div
@@ -209,11 +209,11 @@ const PortfolioLoading = () => {
       >
         {/* Animated Logo/Icon */}
         <motion.div
-          animate={{ 
+          animate={{
             rotate: 360,
             scale: [1, 1.1, 1]
           }}
-          transition={{ 
+          transition={{
             rotate: { duration: 3, repeat: Infinity, ease: "linear" },
             scale: { duration: 2, repeat: Infinity }
           }}
@@ -261,16 +261,16 @@ const PortfolioLoading = () => {
       </motion.div>
     </div>
   );
-};
+});
 
 // Enhanced Error Component
-const PortfolioNotFound = ({ error }) => {
+const PortfolioNotFound = React.memo(({ error }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ 
+        transition={{
           duration: 0.6,
           type: "spring",
           stiffness: 100
@@ -280,10 +280,10 @@ const PortfolioNotFound = ({ error }) => {
         <Card className="border-2 border-destructive/20 shadow-2xl relative overflow-hidden">
           {/* Animated background */}
           <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 to-transparent" />
-          
+
           <CardHeader className="text-center space-y-6 relative z-10">
             <motion.div
-              animate={{ 
+              animate={{
                 rotate: [0, 5, -5, 0],
                 scale: [1, 1.1, 1]
               }}
@@ -294,47 +294,48 @@ const PortfolioNotFound = ({ error }) => {
                 <Sparkles className="h-10 w-10 text-destructive" />
               </div>
             </motion.div>
-            
+
             <div className="space-y-3">
               <CardTitle className="text-2xl md:text-3xl text-destructive">
                 Portfolio Not Found
               </CardTitle>
-              <CardDescription className="text-base md:text-lg">
-                {error || "This portfolio doesn't exist or isn't published yet."}
+              <CardDescription className="text-muted-foreground">
+                {error || "The portfolio you're looking for doesn't exist or has been removed."}
               </CardDescription>
             </div>
           </CardHeader>
-          
-          <CardContent className="text-center space-y-4 relative z-10">
+
+          <CardContent className="space-y-6 relative z-10">
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-col gap-4"
             >
-              <Button 
+              <Button
                 onClick={() => window.location.href = '/'}
+                variant="default"
                 className="w-full gap-2"
-                variant="destructive"
-                size="lg"
               >
-                <ArrowRight className="h-4 w-4" />
+                <Home className="h-4 w-4" />
                 Back to Home
               </Button>
+
+              <Button
+                onClick={() => window.location.reload()}
+                variant="outline"
+                className="w-full gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Try Again
+              </Button>
             </motion.div>
-            
-            <Button 
-              onClick={() => window.location.reload()}
-              variant="outline"
-              className="w-full gap-2"
-            >
-              <RefreshCw className="h-4 w-4" />
-              Try Again
-            </Button>
           </CardContent>
         </Card>
       </motion.div>
     </div>
   );
-};
+});
 
 // Optimized Portfolio Template
 const PortfolioTemplate = React.memo(({ data }) => {
@@ -383,7 +384,7 @@ const PortfolioTemplate = React.memo(({ data }) => {
 
     scrollTimeoutRef.current = requestAnimationFrame(() => {
       const scrollPos = window.scrollY + window.innerHeight / 3;
-      
+
       for (const { id } of navItems) {
         const section = document.getElementById(id);
         if (section) {
@@ -418,7 +419,7 @@ const PortfolioTemplate = React.memo(({ data }) => {
     setIsVisible(true);
     const scrollHandler = () => handleScroll();
     window.addEventListener('scroll', scrollHandler, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', scrollHandler);
       if (scrollTimeoutRef.current) {
@@ -446,63 +447,63 @@ const PortfolioTemplate = React.memo(({ data }) => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="WebsiteMainContainer"
         >
-          <Header 
+          <Header
             personalInfo={personalInfo}
             navItems={navItems}
             activeSection={activeSection}
             scrollToSection={scrollToSection}
             primaryColor={primaryColor}
           />
-          
+
           <main>
-            <HomeSection 
+            <HomeSection
               personalInfo={personalInfo}
               contact={contact}
               resumeUrl={personalInfo?.resumeUrl}
               socialLinks={socialLinks}
             />
-            
-            <AboutSection 
+
+            <AboutSection
               personalInfo={personalInfo}
               professionalDescription={professionalDescription}
               contact={contact}
             />
-            
+
             {skills?.length > 0 && (
-              <SkillsSection 
+              <SkillsSection
                 skills={skills}
               />
             )}
-            
+
             {experience?.length > 0 && (
-              <ExperienceSection 
+              <ExperienceSection
                 experience={experience}
               />
             )}
-            
+
             {education?.length > 0 && (
-              <EducationSection 
+              <EducationSection
                 education={education}
               />
             )}
-            
+
             {projects?.length > 0 && (
-              <ProjectsSection 
+              <ProjectsSection
                 projects={projects}
               />
             )}
-            
-            <ContactSection 
+
+            <ContactSection
               contact={contact}
               socialLinks={socialLinks}
             />
           </main>
-          
-          <Footer 
+
+          <Footer
             personalInfo={personalInfo}
             socialLinks={socialLinks}
           />
-          
+
           {/* Back to Top Button */}
           <BackToTop />
         </motion.div>
@@ -544,27 +545,26 @@ const Header = React.memo(({ personalInfo, navItems, activeSection, scrollToSect
   }, []);
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 poppins-regular transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-background/95 backdrop-blur-lg border-b shadow-2xl shadow-black/5' 
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 poppins-regular transition-all duration-300 ${isScrolled
+        ? 'bg-background/95 backdrop-blur-lg border-b shadow-2xl shadow-black/5'
+        : 'bg-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <motion.div 
+        <motion.div
           className="flex items-center gap-3 cursor-pointer"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => scrollToSection('home')}
         >
           <Avatar className="h-9 w-9 border-2 border-primary/20 shadow-lg">
-            <AvatarImage 
-              src={personalInfo?.avatar} 
+            <AvatarImage
+              src={personalInfo?.avatar}
               alt={`${personalInfo?.firstName}'s avatar`}
               loading="eager"
             />
@@ -583,14 +583,14 @@ const Header = React.memo(({ personalInfo, navItems, activeSection, scrollToSect
             {navItems.map((item, index) => {
               const Icon = item.icon;
               return (
-                <motion.li 
+                <motion.li
                   key={item.id}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
                   <Button
-                    variant={ "ghost"}
+                    variant={"ghost"}
                     size="sm"
                     onClick={() => scrollToSection(item.id)}
                     className="gap-2 relative group px-4"
@@ -598,9 +598,8 @@ const Header = React.memo(({ personalInfo, navItems, activeSection, scrollToSect
                     <Icon className="h-4 w-4" />
                     {item.label}
                     <motion.div
-                      className={`absolute bottom-0 left-1/2 w-4/5 h-0.5 bg-primary rounded-full ${
-                        activeSection === item.id ? 'scale-100' : 'scale-0 group-hover:scale-100'
-                      }`}
+                      className={`absolute bottom-0 left-1/2 w-4/5 h-0.5 bg-primary rounded-full ${activeSection === item.id ? 'scale-100' : 'scale-0 group-hover:scale-100'
+                        }`}
                       style={{ x: '-50%' }}
                       transition={{ duration: 0.3 }}
                     />
@@ -645,11 +644,10 @@ const Header = React.memo(({ personalInfo, navItems, activeSection, scrollToSect
                 return (
                   <motion.button
                     key={item.id}
-                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3 ${
-                      activeSection === item.id 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'hover:bg-muted'
-                    }`}
+                    className={`w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center gap-3 ${activeSection === item.id
+                      ? 'bg-primary/10 text-primary'
+                      : 'hover:bg-muted'
+                      }`}
                     onClick={() => {
                       scrollToSection(item.id);
                       closeMenu();
@@ -683,7 +681,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
     if (personalInfo?.professionalTitle) {
       let currentIndex = 0;
       const title = personalInfo.professionalTitle;
-      
+
       const interval = setInterval(() => {
         if (currentIndex <= title.length) {
           setDisplayTitle(title.slice(0, currentIndex));
@@ -702,11 +700,11 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
       {/* Enhanced Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
-      
+
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Content Section */}
-          <motion.div 
+          <motion.div
             className="space-y-8 lg:space-y-10"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -720,8 +718,8 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                 transition={{ delay: 0.2 }}
                 className="inline-flex"
               >
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className="px-4 py-2 text-sm font-medium backdrop-blur-sm border"
                 >
                   <Sparkles className="h-3 w-3 mr-2" />
@@ -730,7 +728,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
               </motion.div>
 
               {/* Main Heading */}
-              <motion.div 
+              <motion.div
                 className="space-y-4"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -742,7 +740,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                     {personalInfo?.firstName || 'Creator'}
                   </span>
                 </h1>
-                
+
                 {/* Professional Title */}
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -759,7 +757,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
               </motion.div>
 
               {/* Bio */}
-              <motion.p 
+              <motion.p
                 className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -770,7 +768,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
             </div>
 
             {/* Action Buttons */}
-            <motion.div 
+            <motion.div
               className="flex flex-wrap gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -780,7 +778,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
+                <Button
                   size="lg"
                   onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
                   className="gap-3 group px-8"
@@ -794,13 +792,13 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                   </motion.div>
                 </Button>
               </motion.div>
-              
+
               {resumeUrl && (
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button 
+                  <Button
                     variant="outline"
                     size="lg"
                     onClick={() => window.open(resumeUrl, '_blank')}
@@ -815,7 +813,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
 
             {/* Contact & Social Links */}
             {(contact?.email || contact?.location || socialLinks?.length > 0) && (
-              <motion.div 
+              <motion.div
                 className="flex flex-wrap gap-6 pt-6"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -832,9 +830,9 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                     {contact.email}
                   </motion.a>
                 )}
-                
+
                 {contact?.location && (
-                  <motion.div 
+                  <motion.div
                     className="flex items-center gap-2 text-sm text-muted-foreground"
                     whileHover={{ scale: 1.05 }}
                   >
@@ -842,7 +840,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                     {contact.location}
                   </motion.div>
                 )}
-                
+
                 {socialLinks?.length > 0 && (
                   <div className="flex gap-3">
                     {socialLinks.map((link, index) => (
@@ -868,7 +866,7 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
           </motion.div>
 
           {/* Avatar Section */}
-          <motion.div 
+          <motion.div
             className="flex justify-center lg:justify-end"
             initial={{ opacity: 0, x: 50, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -888,15 +886,15 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                   ease: "easeInOut",
                 }}
               />
-              
+
               {/* Main Avatar */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <Avatar className="h-64 w-64 sm:h-80 sm:w-80 border-4 border-background shadow-2xl relative z-10">
-                  <AvatarImage 
-                    src={personalInfo?.avatar} 
+                  <AvatarImage
+                    src={personalInfo?.avatar}
                     alt={fullName}
                     onLoad={() => setImageLoaded(true)}
                     loading="eager"
@@ -906,9 +904,9 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
                   </AvatarFallback>
                 </Avatar>
               </motion.div>
-              
+
               {/* Availability Badge */}
-              <motion.div 
+              <motion.div
                 className="absolute -bottom-3 -right-3 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg flex items-center gap-2 z-20"
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
@@ -923,12 +921,11 @@ const HomeSection = React.memo(({ personalInfo, contact, resumeUrl, socialLinks 
               {[0, 1, 2, 3].map((i) => (
                 <motion.div
                   key={i}
-                  className={`absolute w-6 h-6 bg-primary/30 rounded-full ${
-                    i === 0 ? '-top-3 -left-3' : 
-                    i === 1 ? '-top-3 -right-3' : 
-                    i === 2 ? '-bottom-3 -left-3' :
-                    '-bottom-3 -right-3'
-                  }`}
+                  className={`absolute w-6 h-6 bg-primary/30 rounded-full ${i === 0 ? '-top-3 -left-3' :
+                    i === 1 ? '-top-3 -right-3' :
+                      i === 2 ? '-bottom-3 -left-3' :
+                        '-bottom-3 -right-3'
+                    }`}
                   animate={{
                     y: [0, -15, 0],
                     scale: [1, 1.3, 1],
@@ -988,7 +985,7 @@ const AboutSection = React.memo(({ personalInfo, professionalDescription, contac
     <section id="about" className="py-20 lg:py-28 bg-muted/30 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800" />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
@@ -1012,7 +1009,7 @@ const AboutSection = React.memo(({ personalInfo, professionalDescription, contac
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Left Content */}
-          <motion.div 
+          <motion.div
             className="space-y-8"
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -1094,18 +1091,18 @@ const AboutSection = React.memo(({ personalInfo, professionalDescription, contac
                     {personalInfo?.firstName} {personalInfo?.lastName}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center py-3 border-b border-muted">
                   <span className="font-medium text-foreground">Professional Title</span>
                   <Badge variant="secondary" className="font-medium">
                     {personalInfo?.professionalTitle}
                   </Badge>
                 </div>
-                
+
                 {contact?.phone && (
                   <div className="flex justify-between items-center py-3 border-b border-muted">
                     <span className="font-medium text-foreground">Phone</span>
-                    <a 
+                    <a
                       href={`tel:${contact.phone}`}
                       className="text-muted-foreground hover:text-primary transition-colors"
                     >
@@ -1113,7 +1110,7 @@ const AboutSection = React.memo(({ personalInfo, professionalDescription, contac
                     </a>
                   </div>
                 )}
-                
+
                 {contact?.location && (
                   <div className="flex justify-between items-center py-3 border-b border-muted">
                     <span className="font-medium text-foreground">Location</span>
@@ -1123,14 +1120,14 @@ const AboutSection = React.memo(({ personalInfo, professionalDescription, contac
                     </span>
                   </div>
                 )}
-                
+
                 {contact?.website && (
                   <div className="flex justify-between items-center py-3">
                     <span className="font-medium text-foreground">Website</span>
-                    <a 
-                      href={contact.website} 
+                    <a
+                      href={contact.website}
                       className="text-primary hover:underline font-medium flex items-center gap-1"
-                      target="_blank" 
+                      target="_blank"
                       rel="noopener noreferrer"
                     >
                       Visit
@@ -1176,7 +1173,7 @@ const SkillsSection = React.memo(({ skills }) => {
   return (
     <section id="skills" className="py-20 lg:py-28 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30" />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1207,7 +1204,7 @@ const SkillsSection = React.memo(({ skills }) => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <motion.h3 
+              <motion.h3
                 className="text-2xl font-semibold flex items-center gap-4"
                 whileInView={{ x: 0, opacity: 1 }}
                 initial={{ x: -20, opacity: 0 }}
@@ -1218,7 +1215,7 @@ const SkillsSection = React.memo(({ skills }) => {
                 </div>
                 {category}
               </motion.h3>
-              
+
               <div className="grid gap-4">
                 {categorySkills.map((skill, index) => {
                   const levelInfo = getSkillLevel(skill.level);
@@ -1240,23 +1237,23 @@ const SkillsSection = React.memo(({ skills }) => {
                                 {skill.name}
                               </span>
                             </div>
-                            <Badge 
+                            <Badge
                               variant="secondary"
                               className={`
                                 ${skill.level === 'expert' ? 'bg-green-500/10 text-green-600 border-green-200' :
-                                skill.level === 'advanced' ? 'bg-blue-500/10 text-blue-600 border-blue-200' :
-                                skill.level === 'intermediate' ? 'bg-yellow-500/10 text-yellow-600 border-yellow-200' :
-                                'bg-gray-500/10 text-gray-600 border-gray-200'}
+                                  skill.level === 'advanced' ? 'bg-blue-500/10 text-blue-600 border-blue-200' :
+                                    skill.level === 'intermediate' ? 'bg-yellow-500/10 text-yellow-600 border-yellow-200' :
+                                      'bg-gray-500/10 text-gray-600 border-gray-200'}
                                 font-medium
                               `}
                             >
                               {skill.level}
                             </Badge>
                           </div>
-                          
+
                           <div className="relative">
-                            <Progress 
-                              value={levelInfo.value} 
+                            <Progress
+                              value={levelInfo.value}
                               className="h-3 bg-muted"
                             />
                             <motion.div
@@ -1295,11 +1292,11 @@ const ExperienceSection = React.memo(({ experience }) => {
 
   const calculateDuration = useCallback((startDate, endDate, currentlyWorking) => {
     if (!startDate) return '';
-    
+
     const start = new Date(startDate);
     const end = currentlyWorking ? new Date() : new Date(endDate);
     const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-    
+
     if (months < 12) {
       return `${months} month${months !== 1 ? 's' : ''}`;
     } else {
@@ -1310,9 +1307,9 @@ const ExperienceSection = React.memo(({ experience }) => {
   }, []);
 
   // Filter out experiences with missing critical data
-  const validExperiences = useMemo(() => 
+  const validExperiences = useMemo(() =>
     experience.filter(exp => exp.company && exp.position)
-  , [experience]);
+    , [experience]);
 
   if (validExperiences.length === 0) {
     return null;
@@ -1321,7 +1318,7 @@ const ExperienceSection = React.memo(({ experience }) => {
   return (
     <section id="experience" className="py-20 lg:py-28 bg-muted/30 relative overflow-hidden">
       <div className="absolute inset-0 bg-dot-slate-300 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-dot-slate-800" />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1345,7 +1342,7 @@ const ExperienceSection = React.memo(({ experience }) => {
         <div className="relative">
           {/* Timeline line */}
           <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20" />
-          
+
           <div className="space-y-12">
             {validExperiences.map((exp, index) => (
               <motion.div
@@ -1397,7 +1394,7 @@ const ExperienceSection = React.memo(({ experience }) => {
                           </span>
                         </div>
                       </div>
-                      
+
                       {exp.description && (
                         <p className="text-muted-foreground leading-relaxed">
                           {exp.description}
@@ -1428,9 +1425,9 @@ const EducationSection = React.memo(({ education }) => {
   }, []);
 
   // Filter out education with missing critical data
-  const validEducation = useMemo(() => 
+  const validEducation = useMemo(() =>
     education.filter(edu => edu.institution && edu.degree)
-  , [education]);
+    , [education]);
 
   if (validEducation.length === 0) {
     return null;
@@ -1439,7 +1436,7 @@ const EducationSection = React.memo(({ education }) => {
   return (
     <section id="education" className="py-20 lg:py-28 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background to-muted/30" />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1492,7 +1489,7 @@ const EducationSection = React.memo(({ education }) => {
                       </span>
                     </div>
                   </div>
-                  
+
                   {edu.description && (
                     <p className="text-muted-foreground leading-relaxed">
                       {edu.description}
@@ -1513,9 +1510,9 @@ EducationSection.displayName = 'EducationSection';
 // Enhanced Projects Section
 const ProjectsSection = React.memo(({ projects }) => {
   // Filter out projects with missing critical data
-  const validProjects = useMemo(() => 
+  const validProjects = useMemo(() =>
     projects.filter(project => project.title && project.description)
-  , [projects]);
+    , [projects]);
 
   if (validProjects.length === 0) {
     return null;
@@ -1524,7 +1521,7 @@ const ProjectsSection = React.memo(({ projects }) => {
   return (
     <section id="projects" className="py-20 lg:py-28 bg-muted/30 relative overflow-hidden">
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1575,13 +1572,13 @@ const ProjectsSection = React.memo(({ projects }) => {
                     {project.description}
                   </CardDescription>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   {project.technologies?.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {project.technologies.slice(0, 4).map((tech, techIndex) => (
-                        <Badge 
-                          key={techIndex} 
+                        <Badge
+                          key={techIndex}
                           variant="outline"
                           className="text-xs bg-primary/5 border-primary/20 font-medium"
                         >
@@ -1595,7 +1592,7 @@ const ProjectsSection = React.memo(({ projects }) => {
                       )}
                     </div>
                   )}
-                  
+
                   <div className="flex gap-2">
                     {project.githubUrl && (
                       <motion.div
@@ -1603,8 +1600,8 @@ const ProjectsSection = React.memo(({ projects }) => {
                         whileTap={{ scale: 0.95 }}
                         className="flex-1"
                       >
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="outline"
                           onClick={() => window.open(project.githubUrl, '_blank')}
                           className="w-full gap-2"
@@ -1614,14 +1611,14 @@ const ProjectsSection = React.memo(({ projects }) => {
                         </Button>
                       </motion.div>
                     )}
-                    
+
                     {project.projectUrl && (
                       <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="flex-1"
                       >
-                        <Button 
+                        <Button
                           size="sm"
                           onClick={() => window.open(project.projectUrl, '_blank')}
                           className="w-full gap-2"
@@ -1656,10 +1653,10 @@ const ContactSection = React.memo(({ contact, socialLinks }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     console.log('Form submitted:', formData);
     setIsSubmitting(false);
     setFormData({ name: '', email: '', message: '' });
@@ -1675,7 +1672,7 @@ const ContactSection = React.memo(({ contact, socialLinks }) => {
   return (
     <section id="contact" className="py-20 lg:py-28 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-background" />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -1728,7 +1725,7 @@ const ContactSection = React.memo(({ contact, socialLinks }) => {
                   </Card>
                 </motion.a>
               )}
-              
+
               {contact?.phone && (
                 <motion.a
                   href={`tel:${contact.phone}`}
@@ -1751,7 +1748,7 @@ const ContactSection = React.memo(({ contact, socialLinks }) => {
                   </Card>
                 </motion.a>
               )}
-              
+
               {contact?.location && (
                 <motion.div
                   whileHover={{ scale: 1.02, y: -2 }}
@@ -1804,7 +1801,7 @@ const ContactSection = React.memo(({ contact, socialLinks }) => {
               </motion.div>
             )}
           </motion.div>
-          
+
           {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -1861,7 +1858,7 @@ const ContactSection = React.memo(({ contact, socialLinks }) => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Button 
+                    <Button
                       type="submit"
                       className="w-full gap-3 group"
                       size="lg"
@@ -1909,11 +1906,11 @@ const Footer = React.memo(({ personalInfo, socialLinks }) => {
   return (
     <footer className="bg-background border-t py-12 lg:py-16 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-t from-muted/50 to-transparent" />
-      
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           {/* Brand */}
-          <motion.div 
+          <motion.div
             className="text-center md:text-left"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1937,7 +1934,7 @@ const Footer = React.memo(({ personalInfo, socialLinks }) => {
 
           {/* Social Links */}
           {socialLinks?.length > 0 && (
-            <motion.div 
+            <motion.div
               className="flex gap-3"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1962,7 +1959,7 @@ const Footer = React.memo(({ personalInfo, socialLinks }) => {
         </div>
 
         {/* Copyright */}
-        <motion.div 
+        <motion.div
           className="border-t border-muted mt-8 pt-8 text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -2039,8 +2036,8 @@ const getUserInitials = (personalInfo) => {
 // Add missing icon component
 const RefreshCw = ({ className = "h-4 w-4" }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M23 4v6h-6M1 20v-6h6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M23 4v6h-6M1 20v-6h6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 

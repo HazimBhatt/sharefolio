@@ -1,8 +1,8 @@
 // app/pricing/page.tsx
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Check,
@@ -306,49 +306,9 @@ const PricingPage = () => {
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto space-y-6">
-            {[
-              {
-                question: "What are Portfolio Creation Tokens?",
-                answer: "Tokens are credits used to create and publish portfolios. Each plan includes a set number of tokens that never expire."
-              },
-              {
-                question: "Can I upgrade my plan later?",
-                answer: "Yes! You can purchase additional tokens anytime from your dashboard. Upgrades are instant and one-time payments."
-              },
-              {
-                question: "Do I own my portfolios?",
-                answer: "Absolutely. Once created, your portfolios are yours forever. You can export, modify, or host them anywhere."
-              },
-              {
-                question: "What payment methods do you accept?",
-                answer: "We accept all major credit cards, PayPal, and other secure payment methods through our checkout."
-              },
-              {
-                question: "Is there a free trial?",
-                answer: "Yes! Start with our free Starter plan to create one portfolio and explore all features before upgrading."
-              },
-              {
-                question: "What if I need more tokens?",
-                answer: "You can buy additional tokens individually or upgrade to a higher plan. Contact support for custom enterprise needs."
-              }
-            ].map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="bg-card/50 border border-border rounded-2xl p-6 hover:bg-card/70 transition-colors"
-              >
-                <h3 className="text-lg font-semibold text-foreground mb-3">
-                  {faq.question}
-                </h3>
-                <p className="text-muted-foreground">
-                  {faq.answer}
-                </p>
-              </motion.div>
-            ))}
+          <div className="max-w-4xl mx-auto">
+            {/* Accordion-style FAQ with keyboard support */}
+            <FAQAccordion />
           </div>
         </motion.div>
       </div>
@@ -357,3 +317,97 @@ const PricingPage = () => {
 };
 
 export default PricingPage;
+
+function FAQAccordion() {
+  const faqs = [
+    {
+      question: "What are Portfolio Creation Tokens?",
+      answer:
+        "Tokens are credits used to create and publish portfolios. Each plan includes a set number of tokens that never expire.",
+    },
+    {
+      question: "Can I upgrade my plan later?",
+      answer:
+        "Yes! You can purchase additional tokens anytime from your dashboard. Upgrades are instant and one-time payments.",
+    },
+    {
+      question: "Do I own my portfolios?",
+      answer:
+        "Absolutely. Once created, your portfolios are yours forever. You can export, modify, or host them anywhere.",
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer:
+        "We accept all major credit cards, PayPal, and other secure payment methods through our checkout.",
+    },
+    {
+      question: "Is there a free trial?",
+      answer:
+        "Yes! Start with our free Starter plan to create one portfolio and explore all features before upgrading.",
+    },
+    {
+      question: "What if I need more tokens?",
+      answer:
+        "You can buy additional tokens individually or upgrade to a higher plan. Contact support for custom enterprise needs.",
+    },
+  ];
+
+  const [openIndex, setOpenIndex] = useState(null);
+  const containerRef = useRef(null);
+
+  function toggle(i) {
+    setOpenIndex((prev) => (prev === i ? null : i));
+  }
+
+  return (
+    <div ref={containerRef} className="space-y-4">
+      {faqs.map((f, i) => (
+        <div key={i} className="rounded-2xl border border-border bg-card/50">
+          <button
+            data-focusable
+            aria-expanded={openIndex === i}
+            onClick={() => toggle(i)}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                const next = (i + 1) % faqs.length;
+                containerRef.current?.querySelectorAll("button")[next]?.focus();
+              }
+              if (e.key === "ArrowUp") {
+                e.preventDefault();
+                const prev = (i - 1 + faqs.length) % faqs.length;
+                containerRef.current?.querySelectorAll("button")[prev]?.focus();
+              }
+              if (e.key === "Enter" || e.key === " ") toggle(i);
+            }}
+            className="w-full text-left p-6 flex items-center justify-between gap-4"
+          >
+            <span className="text-lg font-medium text-foreground">{f.question}</span>
+            <svg
+              className={`w-5 h-5 transform transition-transform ${openIndex === i ? "rotate-180" : "rotate-0"}`}
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <AnimatePresence initial={false}>
+            {openIndex === i && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="px-6 pb-6 text-muted-foreground"
+              >
+                {f.answer}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      ))}
+    </div>
+  );
+}
