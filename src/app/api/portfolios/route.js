@@ -9,6 +9,7 @@ export async function POST(request) {
   try {
     // Get token from cookies
     const cookieStore = await cookies();
+    
     const token = cookieStore.get('token')?.value;
 
     if (!token) {

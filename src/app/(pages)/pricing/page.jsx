@@ -1,8 +1,7 @@
-// app/pricing/page.tsx
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React,{ useState,  useMemo } from "react";
+import { motion} from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Check,
@@ -14,15 +13,20 @@ import {
   Infinity as InfinityIcon,
   ArrowRight,
   Coins,
-  Gem
+  Gem,
+  CheckCircle,
+  IndianRupee
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PricingPage = () => {
-  const [activePlan, setActivePlan] = useState(null);
-
-  const plans = [
+  const [activePlan, setActivePlan] = useState("free"); // Default to free plan
+  const { user, isAuthenticated, loading } = useAuth();
+  
+  // Memoize plans to prevent unnecessary re-renders
+  const plans = useMemo(() => [
     {
       id: "free",
       name: "Starter",
@@ -31,8 +35,9 @@ const PricingPage = () => {
       originalPrice: null,
       popular: false,
       featured: false,
-      buttonText: "Continue with Free",
-      buttonVariant: "outline",
+      buttonText: "Get Started",
+      upgradeText: "Current Plan",
+      buttonVariant: "outline" ,
       tokens: 1,
       features: [
         { text: "1 Portfolio Creation Token", included: true },
@@ -47,18 +52,20 @@ const PricingPage = () => {
       icon: Zap,
       color: "from-[#7332a8] to-[#8a3dc2]",
       bgColor: "bg-muted/30",
-      borderColor: "border-border"
+      borderColor: "border-border",
+      subscriptionType: "free"
     },
     {
       id: "pro",
       name: "Creator",
       description: "Perfect for growing creators",
-      price: 10,
-      originalPrice: 15,
+      price: 499,
+      originalPrice: 699,
       popular: true,
       featured: false,
       buttonText: "Continue with Creator",
-      buttonVariant: "default",
+      upgradeText: "Upgrade to Creator",
+      buttonVariant: "default" ,
       tokens: 2,
       features: [
         { text: "2 Portfolio Creation Tokens", included: true },
@@ -73,18 +80,20 @@ const PricingPage = () => {
       icon: Rocket,
       color: "from-[#7332a8] to-[#8a3dc2]",
       bgColor: "bg-[#7332a8]/5",
-      borderColor: "border-[#7332a8]/20"
+      borderColor: "border-[#7332a8]/20",
+      subscriptionType: "premium"
     },
     {
       id: "enterprise",
       name: "Professional",
       description: "For unlimited portfolio needs",
-      price: 40,
-      originalPrice: 60,
+      price: 999,
+      originalPrice: 1399,
       popular: false,
       featured: true,
       buttonText: "Continue with Professional",
-      buttonVariant: "default",
+      upgradeText: "Upgrade to Professional",
+      buttonVariant: "default" ,
       tokens: null, // null represents unlimited
       features: [
         { text: "Unlimited Portfolio Tokens", included: true },
@@ -99,9 +108,78 @@ const PricingPage = () => {
       icon: Crown,
       color: "from-[#7332a8] to-[#8a3dc2]",
       bgColor: "bg-[#7332a8]/5",
-      borderColor: "border-[#7332a8]/20"
+      borderColor: "border-[#7332a8]/20",
+      subscriptionType: "pro"
     }
-  ];
+  ], []);
+
+  // Get current user's plan
+  const getUserCurrentPlan = () => {
+    if (!user) return "free";
+    return user.subscription?.type || "free";
+  };
+
+  const currentUserPlan = getUserCurrentPlan();
+  
+  // Find the current plan object
+  const currentPlanObj = plans.find(plan => plan.subscriptionType === currentUserPlan);
+  
+  // Determine if user can upgrade to a plan
+  const canUpgradeToPlan = (planSubscriptionType) => {
+    const planOrder = ["free", "premium", "pro"];
+    const currentIndex = planOrder.indexOf(currentUserPlan);
+    const targetIndex = planOrder.indexOf(planSubscriptionType);
+    return targetIndex > currentIndex;
+  };
+
+  // Get button text based on user status and plan
+  const getButtonText = (plan) => {
+    if (!isAuthenticated) return plan.buttonText;
+    
+    if (plan.subscriptionType === currentUserPlan) {
+      return (
+        <span className="flex items-center justify-center gap-2">
+          <CheckCircle className="w-4 h-4" />
+          Current Plan
+        </span>
+      );
+    }
+    
+    if (canUpgradeToPlan(plan.subscriptionType)) {
+      return plan.upgradeText;
+    }
+    
+    return plan.buttonText;
+  };
+
+  // Get button variant based on user status and plan
+  const getButtonVariant = (plan) => {
+    if (!isAuthenticated) return plan.buttonVariant;
+    
+    if (plan.subscriptionType === currentUserPlan) {
+      return "outline";
+    }
+    
+    if (canUpgradeToPlan(plan.subscriptionType)) {
+      return "default";
+    }
+    
+    return "outline";
+  };
+
+  // Check if button should be disabled
+  const isButtonDisabled = (plan) => {
+    if (!isAuthenticated) return false;
+    return plan.subscriptionType === currentUserPlan || !canUpgradeToPlan(plan.subscriptionType);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7332a8]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-20 pb-12 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
@@ -134,6 +212,20 @@ const PricingPage = () => {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Pay once, create forever. No subscriptions, no recurring fees.
           </p>
+
+          {/* Current Plan Indicator for authenticated users */}
+          {isAuthenticated && currentPlanObj && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+            >
+              <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                Current plan: <span className="font-bold">{currentPlanObj.name}</span>
+              </span>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Pricing Cards */}
@@ -145,6 +237,9 @@ const PricingPage = () => {
         >
           {plans.map((plan, index) => {
             const Icon = plan.icon;
+            const isCurrentPlan = isAuthenticated && plan.subscriptionType === currentUserPlan;
+            const canUpgrade = isAuthenticated && canUpgradeToPlan(plan.subscriptionType);
+            
             return (
               <motion.div
                 key={plan.id}
@@ -155,13 +250,24 @@ const PricingPage = () => {
                   "relative rounded-3xl border-2 p-6 sm:p-8 flex flex-col h-full transition-all duration-300 hover:shadow-lg",
                   plan.borderColor,
                   plan.bgColor,
-                  plan.popular && "scale-105 shadow-lg border-[#7332a8]/30"
+                  plan.popular && "scale-105 shadow-lg border-[#7332a8]/30",
+                  isCurrentPlan && "ring-2 ring-[#7332a8] ring-offset-2"
                 )}
                 onMouseEnter={() => setActivePlan(plan.id)}
-                onMouseLeave={() => setActivePlan(null)}
+                onMouseLeave={() => setActivePlan("free")} // Reset to default free plan
               >
+                {/* Current Plan Badge */}
+                {isCurrentPlan && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 fill-current" />
+                      Your Plan
+                    </div>
+                  </div>
+                )}
+
                 {/* Popular Badge */}
-                {plan.popular && (
+                {plan.popular && !isCurrentPlan && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <div className="bg-[#7332a8] text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-2">
                       <Star className="w-4 h-4 fill-current" />
@@ -171,7 +277,7 @@ const PricingPage = () => {
                 )}
 
                 {/* Featured Badge */}
-                {plan.featured && (
+                {plan.featured && !isCurrentPlan && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <div className="bg-[#7332a8] text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-2">
                       <Crown className="w-4 h-4 fill-current" />
@@ -180,10 +286,24 @@ const PricingPage = () => {
                   </div>
                 )}
 
+                {/* Upgrade Badge */}
+                {canUpgrade && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <div className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      Upgrade Available
+                    </div>
+                  </div>
+                )}
+
                 {/* Plan Header */}
                 <div className="text-center mb-6">
                   <div className="flex justify-center mb-4">
-                    <div className={cn("p-3 rounded-2xl bg-gradient-to-r", plan.color)}>
+                    <div className={cn(
+                      "p-3 rounded-2xl bg-gradient-to-r", 
+                      plan.color,
+                      isCurrentPlan && "ring-2 ring-[#7332a8] ring-offset-2"
+                    )}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                   </div>
@@ -217,12 +337,12 @@ const PricingPage = () => {
                       </span>
                     ) : (
                       <>
-                        <span className="text-4xl sm:text-5xl font-bold text-foreground">
-                          ${plan.price}
+                        <span className="text-4xl sm:text-5xl font-bold flex items-center text-foreground">
+                          <IndianRupee/>{plan.price}
                         </span>
                         {plan.originalPrice && (
-                          <span className="text-lg text-muted-foreground line-through">
-                            ${plan.originalPrice}
+                          <span className="text-lg text-muted-foreground flex items-center line-through">
+                            <IndianRupee/>{plan.originalPrice}
                           </span>
                         )}
                       </>
@@ -238,16 +358,27 @@ const PricingPage = () => {
                   <Button
                     className={cn(
                       "w-full py-3 text-base font-medium transition-all duration-200",
-                      (plan.popular || plan.featured) && "bg-[#7332a8] hover:bg-[#6332a8]"
+                      (plan.popular || plan.featured) && !isCurrentPlan && "bg-[#7332a8] hover:bg-[#6332a8]",
+                      canUpgrade && "bg-blue-500 hover:bg-blue-600",
+                      isCurrentPlan && "cursor-default"
                     )}
-                    variant={plan.buttonVariant}
+                    variant={getButtonVariant(plan)}
                     size="lg"
-                    asChild
+                    disabled={isButtonDisabled(plan)}
+                    asChild={!isButtonDisabled(plan)}
                   >
-                    <Link href={`/checkout?plan=${plan.id}`}>
-                      {plan.buttonText}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Link>
+                    {!isButtonDisabled(plan) ? (
+                      <Link href={
+                        isAuthenticated && canUpgrade 
+                          ? `/checkout?plan=${plan.id}&upgrade=true`
+                          : `/checkout?plan=${plan.id}`
+                      }>
+                        {getButtonText(plan)}
+                        {!isCurrentPlan && <ArrowRight className="w-4 h-4 ml-2" />}
+                      </Link>
+                    ) : (
+                      <span>{getButtonText(plan)}</span>
+                    )}
                   </Button>
                 </div>
 
@@ -286,128 +417,9 @@ const PricingPage = () => {
             );
           })}
         </motion.div>
-
-        {/* Some QandA related to Premium Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-16 sm:mt-20"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
-              <span className="bg-gradient-to-r from-[#7332a8] via-[#b266ff] to-[#ff80ff] text-transparent bg-clip-text">
-                Frequently Asked Questions
-              </span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Got questions? We've got answers.
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            {/* Accordion-style FAQ with keyboard support */}
-            <FAQAccordion />
-          </div>
-        </motion.div>
       </div>
     </div>
   );
 };
 
 export default PricingPage;
-
-function FAQAccordion() {
-  const faqs = [
-    {
-      question: "What are Portfolio Creation Tokens?",
-      answer:
-        "Tokens are credits used to create and publish portfolios. Each plan includes a set number of tokens that never expire.",
-    },
-    {
-      question: "Can I upgrade my plan later?",
-      answer:
-        "Yes! You can purchase additional tokens anytime from your dashboard. Upgrades are instant and one-time payments.",
-    },
-    {
-      question: "Do I own my portfolios?",
-      answer:
-        "Absolutely. Once created, your portfolios are yours forever. You can export, modify, or host them anywhere.",
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer:
-        "We accept all major credit cards, PayPal, and other secure payment methods through our checkout.",
-    },
-    {
-      question: "Is there a free trial?",
-      answer:
-        "Yes! Start with our free Starter plan to create one portfolio and explore all features before upgrading.",
-    },
-    {
-      question: "What if I need more tokens?",
-      answer:
-        "You can buy additional tokens individually or upgrade to a higher plan. Contact support for custom enterprise needs.",
-    },
-  ];
-
-  const [openIndex, setOpenIndex] = useState(null);
-  const containerRef = useRef(null);
-
-  function toggle(i) {
-    setOpenIndex((prev) => (prev === i ? null : i));
-  }
-
-  return (
-    <div ref={containerRef} className="space-y-4">
-      {faqs.map((f, i) => (
-        <div key={i} className="rounded-2xl border border-border bg-card/50">
-          <button
-            data-focusable
-            aria-expanded={openIndex === i}
-            onClick={() => toggle(i)}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowDown") {
-                e.preventDefault();
-                const next = (i + 1) % faqs.length;
-                containerRef.current?.querySelectorAll("button")[next]?.focus();
-              }
-              if (e.key === "ArrowUp") {
-                e.preventDefault();
-                const prev = (i - 1 + faqs.length) % faqs.length;
-                containerRef.current?.querySelectorAll("button")[prev]?.focus();
-              }
-              if (e.key === "Enter" || e.key === " ") toggle(i);
-            }}
-            className="w-full text-left p-6 flex items-center justify-between gap-4"
-          >
-            <span className="text-lg font-medium text-foreground">{f.question}</span>
-            <svg
-              className={`w-5 h-5 transform transition-transform ${openIndex === i ? "rotate-180" : "rotate-0"}`}
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-
-          <AnimatePresence initial={false}>
-            {openIndex === i && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="px-6 pb-6 text-muted-foreground"
-              >
-                {f.answer}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ))}
-    </div>
-  );
-}
