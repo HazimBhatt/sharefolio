@@ -1,4 +1,4 @@
-// app/checkout/page.tsx
+// app/checkout/CheckoutContent.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -61,7 +61,7 @@ const availableCoupons = [
   }
 ];
 
-const CheckoutPage = () => {
+const CheckoutContent = () => {
   const searchParams = useSearchParams();
   const planId = searchParams.get('plan');
   const isUpgrade = searchParams.get('upgrade') === 'true';
@@ -729,4 +729,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+export default CheckoutContent;
