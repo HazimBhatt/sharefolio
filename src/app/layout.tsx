@@ -32,8 +32,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ModeToggle />
-          <FocusCursor />
           <LayoutWrapper>
           {children}
           </LayoutWrapper>
