@@ -256,7 +256,7 @@ const PortfolioLoading = React.memo(() => {
           transition={{ delay: 1 }}
           className="text-sm text-muted-foreground"
         >
-          Crafting your amazing portfolio...
+         web 🕸️
         </motion.p>
       </motion.div>
     </div>
@@ -1254,7 +1254,7 @@ const SkillsSection = React.memo(({ skills }) => {
 
                           <div className="relative">
                             <Progress
-                              value={levelInfo.value}
+                              // value={levelInfo.value}
                               className="h-3 bg-muted"
                             />
                             <motion.div

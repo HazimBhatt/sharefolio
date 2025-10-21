@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Verify token with server
+  // verifying token with the serveR
   const verifyToken = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/verify', {
@@ -17,49 +17,40 @@ export function AuthProvider({ children }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
+        credentials: 'include', // sends cookies
       });
 
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
         setIsAuthenticated(true);
-        
-
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('tokenVerified', 'true');
-        localStorage.setItem('tokenVerifiedAt', Date.now().toString());
-        
         return data.user;
       } else {
-        // throw new Error('Token verification failed');
+        setUser(null);
+        setIsAuthenticated(false);
+        return null;
       }
     } catch (error) {
       console.error('Token verification error:', error);
       setUser(null);
       setIsAuthenticated(false);
-      localStorage.removeItem('user');
-      localStorage.removeItem('tokenVerified');
-      localStorage.removeItem('tokenVerifiedAt');
       return null;
     }
   }, []);
 
+  // Login and immediately verify
   const login = useCallback(async (email, password) => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        await verifyToken(); 
-        return { success: true, user: data.user };
+        await verifyToken();
+        return { success: true };
       } else {
         const error = await response.json();
         return { success: false, error: error.error || 'Login failed' };
@@ -69,7 +60,7 @@ export function AuthProvider({ children }) {
     }
   }, [verifyToken]);
 
- 
+  // Logout
   const logout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', {
@@ -81,51 +72,27 @@ export function AuthProvider({ children }) {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
-      localStorage.removeItem('user');
-      localStorage.removeItem('tokenVerified');
-      localStorage.removeItem('tokenVerifiedAt');
     }
   }, []);
 
-  const shouldVerifyToken = useCallback(() => {
-    const verifiedAt = localStorage.getItem('tokenVerifiedAt');
-    if (!verifiedAt) return true;
-    
-    const thirtyMinutes = 30 * 60 * 1000; 
-    const timeSinceVerification = Date.now() - parseInt(verifiedAt);
-    
-    return timeSinceVerification > thirtyMinutes;
-  }, []);
-
-
+  // Always verify token when app renders
   useEffect(() => {
     const initializeAuth = async () => {
       setLoading(true);
-      const storedUser = localStorage.getItem('user');
-      const tokenVerified = localStorage.getItem('tokenVerified');
-      
-      if (storedUser && tokenVerified === 'true' && !shouldVerifyToken()) {
- 
-        setUser(JSON.parse(storedUser));
-        setIsAuthenticated(true);
-        setLoading(false);
-      } else {
-  
-        await verifyToken();
-        setLoading(false);
-      }
+      await verifyToken();
+      setLoading(false);
     };
 
     initializeAuth();
-  }, [verifyToken, shouldVerifyToken]);
+  }, [verifyToken]);
 
-  
+  // Re-verify token every 25 minutes if authenticated
   useEffect(() => {
     if (!isAuthenticated) return;
 
     const interval = setInterval(() => {
       verifyToken();
-    }, 25 * 60 * 1000); 
+    }, 25 * 60 * 1000); // 25 minutes
 
     return () => clearInterval(interval);
   }, [isAuthenticated, verifyToken]);
