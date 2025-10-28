@@ -172,7 +172,6 @@ export async function POST(request) {
       }
     }
 
-
     const userPortfoliosCount = await Portfolio.countDocuments({ userId: user._id });
   
     if (userPortfoliosCount >= 100) { 

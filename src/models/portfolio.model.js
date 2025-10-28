@@ -54,7 +54,8 @@ const portfolioSchema = new mongoose.Schema({
   template: {
     type: String,
     required: true,
-    default: 'default'
+    default: 'v1',
+    enum: ['v1', 'v2', 'v3', 'default']
   },
   // Personal Information
   personalInfo: {
@@ -77,18 +78,58 @@ const portfolioSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    avatar: String,
-    resumeUrl: String
+    avatar: {
+      type: String,
+      validate: {
+        validator: function(v) {
+          // Allow empty string or valid URL
+          return v === '' || /^https?:\/\/.+\..+/.test(v);
+        },
+        message: 'Avatar must be a valid URL'
+      }
+    },
+    resumeUrl: {
+      type: String,
+      validate: {
+        validator: function(v) {
+          // Allow empty string or valid URL
+          return v === '' || /^https?:\/\/.+\..+/.test(v);
+        },
+        message: 'Resume URL must be a valid URL'
+      }
+    }
   },
   // Contact Information
   contact: {
     email: {
       type: String,
-      required: true
+      required: true,
+      validate: {
+        validator: function(v) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        },
+        message: 'Email must be a valid email address'
+      }
     },
-    phone: String,
+    phone: {
+      type: String,
+      validate: {
+        validator: function(v) {
+          return v === '' || /^[\+]?[1-9][\d]{0,15}$/.test(v.replace(/[\s\-\(\)]/g, ''));
+        },
+        message: 'Phone must be a valid phone number'
+      }
+    },
     location: String,
-    website: String
+    website: {
+      type: String,
+      validate: {
+        validator: function(v) {
+          return v === '' || /^https?:\/\/.+\..+/.test(v);
+        },
+        message: 'Website must be a valid URL'
+      }
+    }
   },
   // Professional Information
   professionalDescription: {
@@ -188,9 +229,26 @@ const portfolioSchema = new mongoose.Schema({
   timestamps: true
 });
 
-
+// Indexes for better query performance
 portfolioSchema.index({ userId: 1 });
 portfolioSchema.index({ subdomain: 1 });
 portfolioSchema.index({ isPublished: 1 });
+portfolioSchema.index({ template: 1 });
+portfolioSchema.index({ 'personalInfo.avatar': 1 });
+
+// Virtual for full name
+portfolioSchema.virtual('personalInfo.fullName').get(function() {
+  return `${this.personalInfo.firstName} ${this.personalInfo.lastName}`;
+});
+
+// Method to check if portfolio has avatar
+portfolioSchema.methods.hasAvatar = function() {
+  return !!this.personalInfo.avatar && this.personalInfo.avatar.trim() !== '';
+};
+
+// Method to check if portfolio has resume
+portfolioSchema.methods.hasResume = function() {
+  return !!this.personalInfo.resumeUrl && this.personalInfo.resumeUrl.trim() !== '';
+};
 
 export default mongoose.models.Portfolio || mongoose.model('Portfolio', portfolioSchema);

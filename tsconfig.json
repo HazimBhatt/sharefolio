@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/Templates.jsx", "src/components/Layout/containers/SmallWrap.jsx", "src/components/Layout/Testimonial.jsx", "src/components/TestimonialsColumn.jsx", "src/app/(pages)/login/page.jsx", "src/app/(pages)/templates/TemplateCard.jsx", "src/app/(pages)/pricing/page.jsx", "src/app/api/update-user-plan/route.js", "src/app/api/verify-payment/route.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/Templates.jsx", "src/components/Layout/containers/SmallWrap.jsx", "src/components/Layout/Testimonial.jsx", "src/components/TestimonialsColumn.jsx", "src/app/(pages)/login/page.jsx", "src/app/(pages)/templates/TemplateCard.jsx", "src/app/(pages)/pricing/page.jsx", "src/app/api/update-user-plan/route.js", "src/app/api/verify-payment/route.js", "src/components/LayoutWrapper.jsx", "src/contexts/AuthContext.jsx"],
   "exclude": ["node_modules"]
 }

@@ -7,19 +7,31 @@ import {
   Code, Link, Palette, Eye,
   Plus, Trash2, Sparkles, Zap,
   MapPin, Phone, Globe, FileText,
+  Camera, Upload, X
 } from "lucide-react";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
+import { useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PortfolioForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [showExperience, setShowExperience] = useState(true); // New state to toggle experience section
+  const [showExperience, setShowExperience] = useState(true);
+  const [enableResume, setEnableResume] = useState(false);
+  const [enableProfilePhoto, setEnableProfilePhoto] = useState(false);
+  const [useDefaultName, setUseDefaultName] = useState(true);
+  const [useDefaultEmail, setUseDefaultEmail] = useState(true);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const searchParams = useSearchParams();
+  const templateFromUrl = searchParams.get('type') || "default";
 
   const [formData, setFormData] = useState({
-    // Basic Information
     subdomain: "",
-    template: "default",
+    template: templateFromUrl,
 
     // Personal Information
     personalInfo: {
@@ -102,6 +114,37 @@ const PortfolioForm = () => {
       keywords: []
     }
   });
+
+  // Initialize form with user data from auth context
+  useEffect(() => {
+    if (user) {
+      const userName = user.name || "";
+      const nameParts = userName.split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      setFormData(prev => ({
+        ...prev,
+        personalInfo: {
+          ...prev.personalInfo,
+          firstName: useDefaultName ? firstName : prev.personalInfo.firstName,
+          lastName: useDefaultName ? lastName : prev.personalInfo.lastName
+        },
+        contact: {
+          ...prev.contact,
+          email: useDefaultEmail ? (user.email || "") : prev.contact.email
+        }
+      }));
+    }
+  }, [user, useDefaultName, useDefaultEmail]);
+
+  // Update template when URL changes
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      template: templateFromUrl
+    }));
+  }, [templateFromUrl]);
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -200,6 +243,133 @@ const PortfolioForm = () => {
     }
   }, [showExperience]);
 
+  // Toggle resume functionality
+  const toggleResume = useCallback(() => {
+    setEnableResume(prev => !prev);
+    // If disabling resume, clear the resume URL
+    if (enableResume) {
+      setFormData(prev => ({
+        ...prev,
+        personalInfo: {
+          ...prev.personalInfo,
+          resumeUrl: ""
+        }
+      }));
+    }
+  }, [enableResume]);
+
+  // Handle profile photo upload via backend
+  const handleAvatarUpload = useCallback(async (file) => {
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Please select a valid image file (JPEG, PNG, or WebP)');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploadingAvatar(true);
+
+    try {
+      // Get signed upload data from backend
+      const signatureResponse = await fetch('/api/cloudinary/sign-upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          folder: 'portfolio-avatars',
+          public_id: `avatar_${Date.now()}_${user?.id || 'user'}`,
+        }),
+      });
+
+      if (!signatureResponse.ok) {
+        throw new Error('Failed to get upload signature');
+      }
+
+      const { signature, timestamp, api_key, folder, public_id } = await signatureResponse.json();
+
+      // Create form data for upload
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('api_key', api_key);
+      formData.append('signature', signature);
+      formData.append('timestamp', timestamp);
+      formData.append('folder', folder);
+      formData.append('public_id', public_id);
+
+      // Upload to Cloudinary
+      const uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const data = await uploadResponse.json();
+
+      if (data.secure_url) {
+        setFormData(prev => ({
+          ...prev,
+          personalInfo: {
+            ...prev.personalInfo,
+            avatar: data.secure_url
+          }
+        }));
+        setAvatarPreview(data.secure_url);
+        toast.success('Profile photo uploaded successfully!');
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast.error('Failed to upload profile photo. Please try again.');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  }, [user]);
+
+  // Handle file input change
+  const handleFileChange = useCallback((event) => {
+    const file = event.target.files[0];
+    if (file) {
+      handleAvatarUpload(file);
+    }
+  }, [handleAvatarUpload]);
+
+  // Remove profile photo
+  const removeProfilePhoto = useCallback(() => {
+    setFormData(prev => ({
+      ...prev,
+      personalInfo: {
+        ...prev.personalInfo,
+        avatar: ""
+      }
+    }));
+    setAvatarPreview("");
+  }, []);
+
+  // Drag and drop handlers
+  const handleDragOver = useCallback((event) => {
+    event.preventDefault();
+  }, []);
+
+  const handleDrop = useCallback((event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      handleAvatarUpload(file);
+    }
+  }, [handleAvatarUpload]);
+
   const validateStep = useCallback((step) => {
     const newErrors = {};
 
@@ -210,6 +380,7 @@ const PortfolioForm = () => {
         if (!formData.personalInfo.lastName) newErrors.lastName = "Last name is required";
         if (!formData.personalInfo.professionalTitle) newErrors.professionalTitle = "Professional title is required";
         if (!formData.contact.email) newErrors.email = "Email is required";
+        if (enableResume && !formData.personalInfo.resumeUrl) newErrors.resumeUrl = "Resume URL is required when resume is enabled";
         if (formData.subdomain && !/^[a-z0-9-]+$/.test(formData.subdomain)) {
           newErrors.subdomain = "Subdomain can only contain lowercase letters, numbers, and hyphens";
         }
@@ -221,7 +392,7 @@ const PortfolioForm = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData]);
+  }, [formData, enableResume]);
 
   const nextStep = useCallback(() => {
     if (validateStep(currentStep)) {
@@ -235,13 +406,20 @@ const PortfolioForm = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      toast.error('Please login to create a portfolio');
+      return;
+    }
+
     if (validateStep(6)) {
       setIsLoading(true);
       try {
         // Prepare data for submission - remove experience if section is hidden
         const submissionData = {
           ...formData,
-          experience: showExperience ? formData.experience : []
+          experience: showExperience ? formData.experience : [],
+          // Ensure template is included from URL
+          template: templateFromUrl
         };
 
         const response = await fetch('/api/portfolios', {
@@ -255,22 +433,24 @@ const PortfolioForm = () => {
         const data = await response.json();
 
         if (response.ok) {
-          toast.success('Created Successfully! Access at /v1/subdomain');
+          toast.success(`Portfolio created successfully with ${templateFromUrl} template!`);
           setTimeout(() => {
-            window.location.href = `/`
+            window.location.href = `/portfolio/${formData.subdomain}`
           }, 3000)
         } else {
           console.error('Failed to create portfolio:', data.error);
+          toast.error(data.error || 'Failed to create portfolio');
           setErrors({ submit: data.error });
         }
       } catch (error) {
         console.error('Error creating portfolio:', error);
+        toast.error('Failed to create portfolio. Please try again.');
         setErrors({ submit: 'Failed to create portfolio. Please try again.' });
       } finally {
         setIsLoading(false);
       }
     }
-  }, [formData, validateStep, showExperience]);
+  }, [formData, validateStep, showExperience, templateFromUrl, isAuthenticated]);
 
   const steps = [
     { id: 1, name: "Basic Info", icon: User },
@@ -289,7 +469,42 @@ const PortfolioForm = () => {
     </>
   ), []);
 
-  // Step 1: Basic Information
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#7332a8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show unauthorized message if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="text-center max-w-md">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <User className="w-10 h-10 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground mb-4">Authentication Required</h1>
+          <p className="text-muted-foreground mb-6">
+            Please login to create your portfolio. You need to be authenticated to access this feature.
+          </p>
+          <Button 
+            onClick={() => window.location.href = '/login'}
+            className="bg-[#7332a8] p-3 text-white hover:bg-[#5a2786]"
+          >
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 1: Basic Information - UPDATED WITH ALL NEW FEATURES
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -298,37 +513,162 @@ const PortfolioForm = () => {
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Basic Information</h2>
         <p className="text-muted-foreground">Tell us about yourself and how to reach you</p>
+        {templateFromUrl && (
+          <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-[#7332a8]/20 rounded-full">
+            <span className="text-sm font-medium text-[#7332a8]">
+              Using template: {templateFromUrl.toUpperCase()}
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground flex items-center gap-2">
-            <User className="w-4 h-4" />
-            First Name *
-          </label>
-          <input
-            type="text"
-            value={formData.personalInfo.firstName}
-            onChange={(e) => handleChange('personalInfo.firstName', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-            placeholder="Enter your first name"
-          />
-          {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
+      {/* Profile Photo Section with Toggle */}
+      <div className="space-y-4 p-4 border border-border rounded-xl bg-background/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Camera className="w-5 h-5" />
+              Profile Photo
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {enableProfilePhoto ? "Add a professional profile photo" : "Profile photo is disabled"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground">Enable</span>
+            <button
+              type="button"
+              onClick={() => setEnableProfilePhoto(!enableProfilePhoto)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                enableProfilePhoto ? 'bg-[#7332a8]' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  enableProfilePhoto ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground flex items-center gap-2">
-            <User className="w-4 h-4" />
-            Last Name *
-          </label>
-          <input
-            type="text"
-            value={formData.personalInfo.lastName}
-            onChange={(e) => handleChange('personalInfo.lastName', e.target.value)}
-            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-            placeholder="Enter your last name"
-          />
-          {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
+        {enableProfilePhoto && (
+          <div className="space-y-4">
+            {avatarPreview ? (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative">
+                  <img
+                    src={avatarPreview}
+                    alt="Profile preview"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-[#7332a8]/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeProfilePhoto}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-sm text-muted-foreground">Profile photo added successfully!</p>
+              </div>
+            ) : (
+              <div
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#7332a8] transition-colors"
+              >
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  disabled={uploadingAvatar}
+                />
+                <label htmlFor="avatar-upload" className="cursor-pointer">
+                  <div className="flex flex-col items-center space-y-3">
+                    {uploadingAvatar ? (
+                      <div className="w-12 h-12 border-4 border-[#7332a8] border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Upload className="w-12 h-12 text-muted-foreground" />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {uploadingAvatar ? 'Uploading...' : 'Click to upload or drag and drop'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        PNG, JPG, WEBP up to 5MB
+                      </p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Name Section with Toggle */}
+      <div className="space-y-4 p-4 border border-border rounded-xl bg-background/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <User className="w-5 h-5" />
+              Personal Name
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {useDefaultName ? `Using your account name: ${user?.name}` : "Using custom name"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground">Use Default</span>
+            <button
+              type="button"
+              onClick={() => setUseDefaultName(!useDefaultName)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                useDefaultName ? 'bg-[#7332a8]' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  useDefaultName ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              First Name *
+            </label>
+            <input
+              type="text"
+              value={formData.personalInfo.firstName}
+              onChange={(e) => handleChange('personalInfo.firstName', e.target.value)}
+              className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+              placeholder="Enter your first name"
+              disabled={useDefaultName}
+            />
+            {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              Last Name *
+            </label>
+            <input
+              type="text"
+              value={formData.personalInfo.lastName}
+              onChange={(e) => handleChange('personalInfo.lastName', e.target.value)}
+              className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+              placeholder="Enter your last name"
+              disabled={useDefaultName}
+            />
+            {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
+          </div>
         </div>
       </div>
 
@@ -361,6 +701,57 @@ const PortfolioForm = () => {
         />
       </div>
 
+      {/* Resume Toggle Section */}
+      <div className="space-y-4 p-4 border border-border rounded-xl bg-background/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Resume
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {enableResume ? "Add your resume URL" : "Enable to add your resume"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground">Enable</span>
+            <button
+              type="button"
+              onClick={toggleResume}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                enableResume ? 'bg-[#7332a8]' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  enableResume ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {enableResume && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <Link className="w-4 h-4" />
+              Resume URL *
+            </label>
+            <input
+              type="url"
+              value={formData.personalInfo.resumeUrl}
+              onChange={(e) => handleChange('personalInfo.resumeUrl', e.target.value)}
+              className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+              placeholder="https://drive.google.com/your-resume or https://docs.google.com/document/d/..."
+            />
+            {errors.resumeUrl && <p className="text-red-500 text-xs">{errors.resumeUrl}</p>}
+            <p className="text-xs text-muted-foreground">
+              Provide a direct link to your resume (Google Drive, Dropbox, or any file hosting service)
+            </p>
+          </div>
+        )}
+      </div>
+
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground flex items-center gap-2">
           <Globe className="w-4 h-4" />
@@ -379,22 +770,50 @@ const PortfolioForm = () => {
         {errors.subdomain && <p className="text-red-500 text-xs">{errors.subdomain}</p>}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Email Section with Toggle */}
+      <div className="space-y-4 p-4 border border-border rounded-xl bg-background/50">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Mail className="w-5 h-5" />
+              Contact Email
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {useDefaultEmail ? `Using your account email: ${user?.email}` : "Using custom email"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground">Use Default</span>
+            <button
+              type="button"
+              onClick={() => setUseDefaultEmail(!useDefaultEmail)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                useDefaultEmail ? 'bg-[#7332a8]' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  useDefaultEmail ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            Email *
-          </label>
           <input
             type="email"
             value={formData.contact.email}
             onChange={(e) => handleChange('contact.email', e.target.value)}
             className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
             placeholder="your@email.com"
+            disabled={useDefaultEmail}
           />
           {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground flex items-center gap-2">
             <Phone className="w-4 h-4" />
@@ -408,25 +827,25 @@ const PortfolioForm = () => {
             placeholder="+91 1232242324"
           />
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
-          Location
-        </label>
-        <input
-          type="text"
-          value={formData.contact.location}
-          onChange={(e) => handleChange('contact.location', e.target.value)}
-          className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
-          placeholder="Your city and country"
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            Location
+          </label>
+          <input
+            type="text"
+            value={formData.contact.location}
+            onChange={(e) => handleChange('contact.location', e.target.value)}
+            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-[#7332a8] focus:border-transparent bg-background/70 text-foreground"
+            placeholder="Your city and country"
+          />
+        </div>
       </div>
     </div>
   );
 
-
+  // Step 2: Professional Information
   const renderStep2 = () => (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -1061,7 +1480,6 @@ const PortfolioForm = () => {
           <Palette className="w-6 h-6 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Customization</h2>
-        {/* <p className="text-muted-foreground">Primary color(background) and secondary colors(text) are for buttons </p> */}
       </div>
 
       {/* Customization options can be added here */}
@@ -1114,6 +1532,11 @@ const PortfolioForm = () => {
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Create an amazing portfolio to showcase your work and skills to the world.
+            {templateFromUrl && (
+              <span className="block mt-2 text-sm font-medium text-[#7332a8]">
+                Template: {templateFromUrl.toUpperCase()}
+              </span>
+            )}
           </p>
         </motion.div>
 

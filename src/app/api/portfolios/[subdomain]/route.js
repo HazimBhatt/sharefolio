@@ -6,13 +6,14 @@ export async function GET(request, { params }) {
   try {
     await dbConnect();
 
-    const { subdomain } =await params;
-    
+    const { subdomain } = await params;
 
     const portfolio = await Portfolio.findOne({ 
       subdomain,
       isPublished: true 
-    }).populate('userId', 'name email');
+    })
+    .populate('userId', 'name email')
+    .select('+services +socialLinks +highlights'); // Ensure all fields are selected
 
     if (!portfolio) {
       return NextResponse.json(
@@ -25,9 +26,23 @@ export async function GET(request, { params }) {
       $inc: { views: 1 }
     });
 
-    console.log(portfolio);
+    // Transform the data to include all necessary fields
+    const portfolioData = portfolio.toObject ? portfolio.toObject() : portfolio;
     
-    return NextResponse.json({ portfolio });
+    // Ensure services and socialLinks are properly formatted
+    if (!portfolioData.services) {
+      portfolioData.services = [];
+    }
+    
+    if (!portfolioData.socialLinks) {
+      portfolioData.socialLinks = [];
+    }
+    
+    if (!portfolioData.highlights) {
+      portfolioData.highlights = [];
+    }
+
+    return NextResponse.json({ portfolio: portfolioData });
 
   } catch (error) {
     console.error('Portfolio fetch error:', error);
