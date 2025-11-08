@@ -7,13 +7,14 @@ export async function GET(request, { params }) {
     await dbConnect();
 
     const { subdomain } = await params;
-
+  
+    
     const portfolio = await Portfolio.findOne({ 
       subdomain,
       isPublished: true 
     })
     .populate('userId', 'name email')
-    .select('+services +socialLinks +highlights'); // Ensure all fields are selected
+    .select('+services +socialLinks +highlights');
 
     if (!portfolio) {
       return NextResponse.json(

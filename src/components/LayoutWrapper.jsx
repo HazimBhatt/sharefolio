@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { ModeToggle } from "./ModeToggle";
-import FocusCursor from "./FocusCursor";
+// import FocusCursor from "./FocusCursor";
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname() || '';
@@ -15,10 +15,9 @@ export default function LayoutWrapper({ children }) {
   return (
     <>
       {!isPortfolioView && <ModeToggle />}
-      {!isPortfolioView && <FocusCursor />}
       {!isPortfolioView && <Navbar />}
       {isPortfolioView && <ModeToggle />}
-      {isPortfolioView && <FocusCursor />}
+
       {children}
       {!isPortfolioView && <Footer />}
     </>

@@ -50,7 +50,8 @@ import {
   Rocket,
   Target,
   Users,
-  TrendingUp
+  TrendingUp,
+  Home
 } from 'lucide-react';
 
 // Lazy load heavy components
