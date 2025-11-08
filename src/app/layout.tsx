@@ -6,8 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 const poppins = Poppins({
-  variable: "--font-poppins",
-  weight: ["300", "400", "500", "600", "700"], 
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -23,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className={`${poppins.className} font-sans antialiased`} suppressHydrationWarning>
        <AuthProvider>
         <ThemeProvider
           attribute="class"
