@@ -23,8 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-       <AuthProvider>
       <body className={`${poppins.variable} font-sans antialiased`} suppressHydrationWarning>
+       <AuthProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,8 +35,8 @@ export default function RootLayout({
           {children}
           </LayoutWrapper> 
         </ThemeProvider>
-      </body>
       </AuthProvider>
+      </body>
     </html>
   );
 }
